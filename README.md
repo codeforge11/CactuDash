@@ -5,7 +5,7 @@
 </br>
 
 # CactuDash
- 
+ CactuDash is a minimalist and highly optimized dashboard designed for efficient server management.
 
 ## Supported Operating Systems
 

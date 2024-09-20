@@ -8,14 +8,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
+	"github.com/gorilla/websocket"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var store = sessions.NewCookieStore([]byte("secret-key"))
 
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true // In production, this should be stricter to prevent cross-origin attacks
+	},
+}
+
 func checkAuthenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Retrieve the session
 		session, err := store.Get(c.Request, "session-name")
 		if err != nil {
 			log.Println("Error getting session:", err)
@@ -24,14 +30,11 @@ func checkAuthenticated() gin.HandlerFunc {
 			return
 		}
 
-		// Check if the user is authenticated
 		if auth, ok := session.Values["loggedin"].(bool); !ok || !auth {
 			c.Redirect(http.StatusFound, "/")
 			c.Abort()
 			return
 		}
-
-		// Continue to the requested route
 		c.Next()
 	}
 }
@@ -100,7 +103,6 @@ func loginHandler(c *gin.Context) {
 }
 
 func osNameHandler(c *gin.Context) {
-
 	hostname, err := os.Hostname()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get hostname"})
@@ -109,14 +111,33 @@ func osNameHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"os_name": hostname})
 }
 
-// func osUptimeHandler(c *gin.Context) {
-// 	var uptime, err = uptime.Get()
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get uptime"})
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{"uptime": uptime.Seconds()})
-// }
+// WebSocket handler
+func wsHandler(c *gin.Context) {
+	// Upgrade initial HTTP connection to a WebSocket
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Println("Failed to set WebSocket upgrade:", err)
+		return
+	}
+	defer conn.Close()
+
+	for {
+		// Read message from client
+		messageType, message, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("Error reading WebSocket message:", err)
+			break
+		}
+		log.Printf("Received: %s", message)
+
+		// Echo message back to client
+		err = conn.WriteMessage(messageType, message)
+		if err != nil {
+			log.Println("Error writing WebSocket message:", err)
+			break
+		}
+	}
+}
 
 func main() {
 	router := gin.Default()
@@ -140,9 +161,11 @@ func main() {
 		c.File("sites/welcome.html")
 	})
 
-	//system info:
+	// System info
 	router.GET("/os-name", osNameHandler)
-	//router.GET("/uptime", osUptimeHandler)
+
+	// WebSocket route
+	router.GET("/ws", wsHandler)
 
 	err = router.Run(":3030")
 	if err != nil {
