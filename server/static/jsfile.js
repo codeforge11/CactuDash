@@ -9,7 +9,24 @@
 //     return hours+':'+minutes+':'+seconds;
 // }
 
+const socket = new WebSocket('ws://localhost:3030/ws');
+    
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    document.getElementById('processor').textContent = data.cpu_usage.toFixed(2) + '%';
+};
 
+socket.onopen = function() {
+    console.log('WebSocket connection established');
+};
+
+socket.onclose = function() {
+    console.log('WebSocket connection closed');
+};
+
+socket.onerror = function(error) {
+    console.log('WebSocket error:', error);
+};
 
 async function SysInfo() {
     try {

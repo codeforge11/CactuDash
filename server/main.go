@@ -5,6 +5,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
+
+	"github.com/shirou/gopsutil/cpu"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -18,6 +21,15 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true // In production, this should be stricter to prevent cross-origin attacks
 	},
+}
+
+func cpuUsageHandler(c *gin.Context) {
+	usage, err := cpu.Percent(0, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get CPU usage"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"cpu_usage": usage[0]})
 }
 
 func checkAuthenticated() gin.HandlerFunc {
@@ -113,7 +125,6 @@ func osNameHandler(c *gin.Context) {
 
 // WebSocket handler
 func wsHandler(c *gin.Context) {
-	// Upgrade initial HTTP connection to a WebSocket
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println("Failed to set WebSocket upgrade:", err)
@@ -122,20 +133,21 @@ func wsHandler(c *gin.Context) {
 	defer conn.Close()
 
 	for {
-		// Read message from client
-		messageType, message, err := conn.ReadMessage()
+		usage, err := cpu.Percent(0, false)
 		if err != nil {
-			log.Println("Error reading WebSocket message:", err)
+			log.Println("Error getting CPU usage:", err)
 			break
 		}
-		log.Printf("Received: %s", message)
 
-		// Echo message back to client
-		err = conn.WriteMessage(messageType, message)
+		// Send the CPU usage to the client
+		err = conn.WriteJSON(gin.H{"cpu_usage": usage[0]})
 		if err != nil {
 			log.Println("Error writing WebSocket message:", err)
 			break
 		}
+
+		// Wait for 2 seconds before sending the next message
+		time.Sleep(2 * time.Second)
 	}
 }
 
@@ -166,6 +178,8 @@ func main() {
 
 	// WebSocket route
 	router.GET("/ws", wsHandler)
+
+	router.GET("/cpu-usage", cpuUsageHandler)
 
 	err = router.Run(":3030")
 	if err != nil {

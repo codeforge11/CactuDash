@@ -9,11 +9,11 @@
 
 ## Supported Operating Systems
 
-| OS      | Status |
-| ------- | :----: |
-| Debian  |   ✅   |
-| Ubuntu  |   ✅   |
-| Fedora  |   🚧   |
+| OS             | Status |
+|----------------|:------:|
+| Debian/Ubuntu  |   ✅   |
+| Red Hat/Fedora |   ✅   |
+
 
 ## Installation and other information
 For information on installation and basic information about my dashboard, see [GitHub Wiki](https://github.com/codeforge11/CactuDash/wiki)
