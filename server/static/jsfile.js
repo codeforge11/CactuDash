@@ -34,6 +34,10 @@ async function SysInfo() {
         const data = await response.json();
         document.getElementById('os-name').innerText = data.os_name;
 
+        const kernelResponse = await fetch('/kernel_version');
+        const kernelData = await kernelResponse.json();
+        document.getElementById('kernel').innerText = kernelData.os_name;
+
         // const uptimeResponse = await fetch('/uptime');
         // const uptimeData = await uptimeResponse.json();
         

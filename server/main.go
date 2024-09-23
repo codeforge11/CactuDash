@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -14,6 +15,11 @@ import (
 	"github.com/gorilla/websocket"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+type Credentials struct {
+	Username string `form:"username" json:"username"`
+	Password string `form:"password" json:"password"`
+}
 
 var store = sessions.NewCookieStore([]byte("secret-key"))
 
@@ -49,11 +55,6 @@ func checkAuthenticated() gin.HandlerFunc {
 		}
 		c.Next()
 	}
-}
-
-type Credentials struct {
-	Username string `form:"username" json:"username"`
-	Password string `form:"password" json:"password"`
 }
 
 func connectDB() (*sql.DB, error) {
@@ -123,6 +124,19 @@ func osNameHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"os_name": hostname})
 }
 
+func kernelVersionHandler(c *gin.Context) {
+	// kernelVersion, err := os.ReadFile("/proc/version")
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get kernel version"})
+	// 	return
+	// }
+	out, err := exec.Command("uname", "-r").Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.JSON(http.StatusOK, gin.H{"kernel_version": string(out)})
+}
+
 // WebSocket handler
 func wsHandler(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -176,10 +190,13 @@ func main() {
 	// System info
 	router.GET("/os-name", osNameHandler)
 
+	// Kernel info
+	router.GET("/kernel_version", kernelVersionHandler)
+
 	// WebSocket route
 	router.GET("/ws", wsHandler)
 
-	router.GET("/cpu-usage", cpuUsageHandler)
+	router.GET("/cpu-usage", cpuUsageHandler) // CPU usage
 
 	err = router.Run(":3030")
 	if err != nil {
