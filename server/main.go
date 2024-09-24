@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -130,11 +131,16 @@ func kernelVersionHandler(c *gin.Context) {
 	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get kernel version"})
 	// 	return
 	// }
+
 	out, err := exec.Command("uname", "-r").Output()
 	if err != nil {
 		log.Fatal(err)
 	}
-	c.JSON(http.StatusOK, gin.H{"kernel_version": string(out)})
+	c.JSON(http.StatusOK, gin.H{"kernel_version": strings.TrimSpace(string(out))})
+}
+
+func CactuDashVersion(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"CactuDash_version": Version})
 }
 
 // WebSocket handler
@@ -195,6 +201,8 @@ func main() {
 
 	// WebSocket route
 	router.GET("/ws", wsHandler)
+
+	router.GET("/CactuDash_version", CactuDashVersion)
 
 	router.GET("/cpu-usage", cpuUsageHandler) // CPU usage
 

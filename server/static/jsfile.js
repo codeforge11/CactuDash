@@ -36,7 +36,12 @@ async function SysInfo() {
 
         const kernelResponse = await fetch('/kernel_version');
         const kernelData = await kernelResponse.json();
-        document.getElementById('kernel').innerText = kernelData.os_name;
+        document.getElementById('kernel').innerText = kernelData.kernel_version;
+
+
+        const cactudashresponse = await fetch('/CactuDash_version');
+        const cactudashData = await cactudashresponse.json();
+        document.getElementById('CactuDash_version').innerText = cactudashData.CactuDash_version;
 
         // const uptimeResponse = await fetch('/uptime');
         // const uptimeData = await uptimeResponse.json();
