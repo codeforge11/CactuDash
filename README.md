@@ -5,7 +5,7 @@
 </br>
 
 # CactuDash
- CactuDash is a minimalist and highly optimized dashboard designed for efficient server management.
+CactuDash is a minimalist and highly optimized dashboard designed for efficient server management and includes Docker.
 
 ## Supported Operating Systems
 

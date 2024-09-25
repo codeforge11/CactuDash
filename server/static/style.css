@@ -136,3 +136,13 @@ body {
   box-shadow: none;
   transform: translateY(0);
 }
+
+.check_for_updates{
+  width: 100px; /* Szerokość przycisku */
+  height: 100px; /* Wysokość przycisku */
+  background-image: url('images/dashboard_images/check_for_updates.svg'); /* Ścieżka do obrazu */
+  background-size: cover; /* Dopasowanie obrazu do rozmiaru przycisku */
+  border: none; /* Usunięcie obramowania */
+  cursor: pointer; /* Zmiana kursora na wskaźnik */
+}
+
