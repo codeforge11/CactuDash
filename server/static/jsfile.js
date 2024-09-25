@@ -53,4 +53,17 @@ async function SysInfo() {
     }
 }
 
+async function reboot(){
+    // console.log('test');
+
+    try {
+        const response = await fetch('/reboot');
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
 SysInfo(); 

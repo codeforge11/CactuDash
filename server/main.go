@@ -143,6 +143,15 @@ func CactuDashVersion(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"CactuDash_version": Version})
 }
 
+func reboot(c *gin.Context) {
+
+	err := exec.Command("reboot").Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
+}
+
 // WebSocket handler
 func wsHandler(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -205,6 +214,8 @@ func main() {
 	router.GET("/CactuDash_version", CactuDashVersion)
 
 	router.GET("/cpu-usage", cpuUsageHandler) // CPU usage
+
+	router.GET("/reboot", reboot)
 
 	err = router.Run(":3030")
 	if err != nil {

@@ -96,7 +96,7 @@ body {
   text-align: center;
 }
 
-.logoutButton {
+.RebootButton {
   align-items: center;
   background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
   border: 0;
@@ -123,27 +123,16 @@ body {
   right: 10px;
 }
 
-.logoutButton:active,
-.logoutButton:hover {
-  outline: 0;
+.RebootButton:disabled {
+  pointer-events: none;
 }
 
-.logoutButton span {
-  background-color: rgb(5, 6, 45);
-  padding: 16px 24px;
-  border-radius: 6px;
-  width: 100%;
-  height: 100%;
-  transition: 300ms;
+.RebootButton:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
 }
 
-.logoutButton:hover span {
-  background: none;
-}
-
-@media (min-width: 768px) {
-  .logoutButton {
-    font-size: 24px;
-    min-width: 196px;
-  }
+.RebootButton:active {
+  box-shadow: none;
+  transform: translateY(0);
 }
