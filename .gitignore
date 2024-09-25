@@ -1,5 +1,5 @@
 test/
-server/test/
-server/DataBase/CactuDash.sqbpro
+CactuDash-server/test/
+CactuDash-server/DataBase/CactuDash.sqbpro
 docs/
 .idea/
