@@ -35,16 +35,22 @@
                 </tr>
             </table>
         </div>
+
         <div class="dynamic-card">
-            <h2>Updates</h2>
+            <h2>Disk Usage</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="disk-progress"></div>
+            </div>
+            <div id="disk-usage">Loading disk usage...</div>
         </div>
 
         <div class="dynamic-card">
             <img src="static/img/dashboard_images/docker-logo-blue.svg" alt="Docker" width="200" />
         </div>
 
-        <button class="RebootButton" role="button" onclick="reboot()"> Reboot</button>
+        <button class="RebootButton" role="button" onclick="reboot()">Reboot</button>
     </div>
+
 </body>
 
 </html>

@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shirou/gopsutil/cpu"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/disk"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -130,12 +130,25 @@ func systemInfoHandler(c *gin.Context) {
 	})
 }
 
+func diskUsageHandler(c *gin.Context) {
+	usageStat, err := disk.Usage("/")
+	if err != nil {
+		log.Println("Error getting disk usage:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get disk usage"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"used":  usageStat.Used,
+		"total": usageStat.Total,
+	})
+}
+
 func cactuDashDataHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"version": Version})
 }
 
 func reboot(c *gin.Context) {
-
 	err := exec.Command("reboot").Run()
 	if err != nil {
 		log.Fatal(err)
@@ -194,6 +207,7 @@ func main() {
 
 	// System info
 	router.GET("/system-info", systemInfoHandler)
+	router.GET("/disk-usage", diskUsageHandler) // New route for disk usage
 
 	// WebSocket route
 	router.GET("/ws", wsHandler)
