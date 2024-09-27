@@ -1,10 +1,9 @@
-
-# Function to detect system architecture
+# Function to detect processor architecture
 detect_arch() {
     case "$(uname -m)" in
         x86_64) echo "amd64" ;;
         aarch64) echo "arm64" ;;
-        *) echo "Unsupported architecture: $(uname -m)"; exit 1 ;;
+        *) echo "Unsupported processor architecture: $(uname -m)"; exit 1 ;;
     esac
 }
 

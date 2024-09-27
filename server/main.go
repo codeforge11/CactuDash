@@ -15,6 +15,8 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
 	_ "github.com/mattn/go-sqlite3"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Credentials struct {
@@ -28,15 +30,6 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true // In production, this should be stricter to prevent cross-origin attacks
 	},
-}
-
-func cpuUsageHandler(c *gin.Context) {
-	usage, err := cpu.Percent(0, false)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get CPU usage"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"cpu_usage": usage[0]})
 }
 
 func checkAuthenticated() gin.HandlerFunc {
@@ -59,7 +52,7 @@ func checkAuthenticated() gin.HandlerFunc {
 }
 
 func connectDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "./DataBase/CactuDash.db")
+	db, err := sql.Open("sqlite3", "./database/CactuDash.db")
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +87,7 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	if password != creds.Password {
+	if bcrypt.CompareHashAndPassword([]byte(password), []byte(creds.Password)) != nil {
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -116,31 +109,29 @@ func loginHandler(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/welcome")
 }
 
-func osNameHandler(c *gin.Context) {
+func systemInfoHandler(c *gin.Context) {
 	hostname, err := os.Hostname()
 	if err != nil {
+		log.Fatal(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get hostname"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"os_name": hostname})
-}
 
-func kernelVersionHandler(c *gin.Context) {
-	// kernelVersion, err := os.ReadFile("/proc/version")
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get kernel version"})
-	// 	return
-	// }
-
-	out, err := exec.Command("uname", "-r").Output()
+	kernelVersion, err := exec.Command("uname", "-r").Output()
 	if err != nil {
 		log.Fatal(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get kernel version"})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"kernel_version": strings.TrimSpace(string(out))})
+
+	c.JSON(http.StatusOK, gin.H{
+		"hostname":       hostname,
+		"kernel_version": strings.TrimSpace(string(kernelVersion)),
+	})
 }
 
-func CactuDashVersion(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"CactuDash_version": Version})
+func cactuDashDataHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"version": Version})
 }
 
 func reboot(c *gin.Context) {
@@ -190,7 +181,6 @@ func main() {
 	}
 
 	router.Static("/static", "./static")
-	router.Static("/images", "./css/images")
 
 	router.GET("/", func(c *gin.Context) {
 		c.File("sites/login.html")
@@ -203,19 +193,14 @@ func main() {
 	})
 
 	// System info
-	router.GET("/os-name", osNameHandler)
-
-	// Kernel info
-	router.GET("/kernel_version", kernelVersionHandler)
+	router.GET("/system-info", systemInfoHandler)
 
 	// WebSocket route
 	router.GET("/ws", wsHandler)
 
-	router.GET("/CactuDash_version", CactuDashVersion)
+	router.GET("/cactu-dash", cactuDashDataHandler)
 
-	router.GET("/cpu-usage", cpuUsageHandler) // CPU usage
-
-	router.GET("/reboot", reboot)
+	router.POST("/reboot", reboot)
 
 	err = router.Run(":3030")
 	if err != nil {

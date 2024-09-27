@@ -1,6 +1,6 @@
 test/
-CactuDash-server/test/
-CactuDash-server/DataBase/CactuDash.sqbpro
+server/test/
+server/database
 docs/
 .idea/
 eksport/

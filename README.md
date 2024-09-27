@@ -1,6 +1,6 @@
 <br>
 <div align="center">
-    <img src="https://raw.githubusercontent.com/codeforge11/CactuDash/master/CactuDash-server/static/images/logomark.svg" alt="CactuDash" width="400" />
+    <img src="https://raw.githubusercontent.com/codeforge11/CactuDash/master/CactuDash-server/static/img/logomark.svg" alt="CactuDash" width="400" />
 </div>
 </br>
 

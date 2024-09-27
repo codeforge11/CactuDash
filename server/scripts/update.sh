@@ -1,4 +1,3 @@
-
 update_debian() {
     sudo apt update && sudo apt upgrade -y
 }
@@ -17,7 +16,7 @@ if [ -f /etc/os-release ]; then
             update_fedora
             ;;
         *)
-            echo "Unsupported architecture $ID"
+            echo "Unsupported distribution $ID"
             ;;
     esac
 else

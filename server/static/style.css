@@ -138,11 +138,11 @@ body {
 }
 
 .check_for_updates{
-  width: 100px; /* Szerokość przycisku */
-  height: 100px; /* Wysokość przycisku */
-  background-image: url('images/dashboard_images/check_for_updates.svg'); /* Ścieżka do obrazu */
-  background-size: cover; /* Dopasowanie obrazu do rozmiaru przycisku */
-  border: none; /* Usunięcie obramowania */
-  cursor: pointer; /* Zmiana kursora na wskaźnik */
+  width: 100px; 
+  height: 100px; 
+  background-image: url('images/dashboard_images/check_for_updates.svg'); 
+  background-size: cover; 
+  border: none; 
+  cursor: pointer; 
 }
 
