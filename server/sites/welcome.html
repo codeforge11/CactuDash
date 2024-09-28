@@ -11,7 +11,14 @@
 </head>
 
 <body>
-    <div class="title">CactuDash</div>
+
+    <div class="navbar">
+        <div class="navbar-title">CactuDash</div>
+        <div class="container-buttons">
+            <button class="documentation"><img src="static/img/info.svg" alt="Documentation" onclick="openDocs()"></button>
+            <button class="RebootButton" role="button" onclick="reboot()">Reboot</button>
+        </div>
+    </div>
 
     <div class="container">
         <div class="dynamic-card">
@@ -47,10 +54,8 @@
         <div class="dynamic-card">
             <img src="static/img/dashboard_images/docker-logo-blue.svg" alt="Docker" width="200" />
         </div>
-
-        <button class="RebootButton" role="button" onclick="reboot()">Reboot</button>
     </div>
-
+      
 </body>
 
 </html>

@@ -78,4 +78,8 @@ async function reboot() {
     }
 }
 
+function openDocs() {
+    window.location.href = "https://github.com/codeforge11/CactuDash/wiki"; 
+}
+
 SysInfo();

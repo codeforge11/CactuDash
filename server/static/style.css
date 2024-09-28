@@ -2,11 +2,15 @@
   font-family: DejaVu Sans Mono, monospace;
   box-sizing: border-box;
   font-size: 16px;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   background-color: rgb(0, 0, 0);
   overflow: hidden;
+  margin: 0;  
+  padding: 0;
 }
 
 .login {
@@ -70,14 +74,6 @@ body {
   margin-top: 0;
 }
 
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  margin: 20px;
-}
-
 .dynamic-card {
   font-size: 1.2rem;
   padding: 1rem 2.5rem;
@@ -94,47 +90,6 @@ body {
   min-width: 200px; 
   height: auto; 
   text-align: center;
-}
-
-.RebootButton {
-  align-items: center;
-  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
-  border: 0;
-  border-radius: 8px;
-  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  display: flex;
-  font-family: Phantomsans, sans-serif;
-  font-size: 20px;
-  justify-content: center;
-  line-height: 1em;
-  max-width: 100%;
-  min-width: 140px;
-  padding: 3px;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  white-space: nowrap;
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.RebootButton:disabled {
-  pointer-events: none;
-}
-
-.RebootButton:hover {
-  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
-  transform: translateY(-2px);
-}
-
-.RebootButton:active {
-  box-shadow: none;
-  transform: translateY(0);
 }
 
 .check_for_updates{
@@ -161,4 +116,86 @@ body {
   width: 0;
   border-radius: 8px;
   transition: width 0.4s ease;
+}
+
+.navbar {
+  width: 100%;
+  background-color: #1e1e1e;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  height: auto;
+}
+
+.container {
+  margin-top: 100px;
+  padding: 10px; 
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.navbar-title {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.container-buttons {
+  display: flex;
+  gap: 10px; 
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.RebootButton {
+  background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  color: #FFFFFF;
+  font-size: 18px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.RebootButton:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+
+.RebootButton:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.documentation {
+  background-color: #00A7E1;
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+.documentation:hover {
+  background-color: #007BB3;
+}
+
+.documentation:active {
+  background-color: #005F87;
+}
+
+.documentation, .RebootButton {
+  display: inline-block;
 }
