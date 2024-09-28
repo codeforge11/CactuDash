@@ -82,4 +82,45 @@ function openDocs() {
     window.location.href = "https://github.com/codeforge11/CactuDash/wiki"; 
 }
 
+function CpuUsage(percentage) {
+    const canvas = document.getElementById('cpuCanvas');
+    const context = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 5;
+    const endAngle = (percentage / 100) * 2 * Math.PI;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.beginPath();
+    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+    context.fillStyle = '#e0e0e0';  
+    context.fill();
+    context.closePath();
+
+    context.beginPath();
+    context.moveTo(centerX, centerY);
+    context.arc(centerX, centerY, radius, -0.5 * Math.PI, endAngle - 0.5 * Math.PI, false);
+    context.fillStyle = '#007bff';  
+    context.fill();
+    context.closePath();
+    context.beginPath();
+    context.arc(centerX, centerY, radius - 12, 0, 2 * Math.PI, false);  
+    context.fillStyle = '#ffffff'; 
+    context.fill();
+    context.closePath();
+
+    context.shadowColor = "rgba(0, 0, 0, 0.3)";
+    context.shadowBlur = 10;
+    context.shadowOffsetX = 2;
+    context.shadowOffsetY = 2;
+}
+
+socket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    const cpuUsage = data.cpu_usage.toFixed(2);
+
+    document.getElementById('cpuPercentage').textContent = cpuUsage + '%';
+
+    CpuUsage(cpuUsage);
+};
+
 SysInfo();
