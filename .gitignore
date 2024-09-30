@@ -1,5 +1,6 @@
 test/
 server/test/
+server/logs/
 server/database
 docs/
 .idea/

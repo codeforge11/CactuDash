@@ -37,6 +37,7 @@ func checkAuthenticated() gin.HandlerFunc {
 		session, err := store.Get(c.Request, "session-name")
 		if err != nil {
 			log.Println("Error getting session:", err)
+			logError(err)
 			c.Redirect(http.StatusFound, "/")
 			c.Abort()
 			return
@@ -62,6 +63,7 @@ func connectDB() (*sql.DB, error) {
 func loginHandler(c *gin.Context) {
 	var creds Credentials
 	if err := c.Bind(&creds); err != nil {
+		logError(err)
 		c.JSON(400, gin.H{"error": "invalid request"})
 		return
 	}
@@ -69,6 +71,7 @@ func loginHandler(c *gin.Context) {
 	db, err := connectDB()
 	if err != nil {
 		log.Println("Error connecting to database:", err)
+		logError(err)
 		c.JSON(500, gin.H{"error": "database connection error"})
 		return
 	}
@@ -82,6 +85,7 @@ func loginHandler(c *gin.Context) {
 			c.JSON(401, gin.H{"error": "invalid credentials"})
 		} else {
 			log.Println("Error querying database:", err)
+			logError(err)
 			c.JSON(500, gin.H{"error": "database query error"})
 		}
 		return
@@ -95,6 +99,7 @@ func loginHandler(c *gin.Context) {
 	session, err := store.Get(c.Request, "session-name")
 	if err != nil {
 		log.Println("Error creating session:", err)
+		logError(err)
 		c.JSON(500, gin.H{"error": "session error"})
 		return
 	}
@@ -102,6 +107,7 @@ func loginHandler(c *gin.Context) {
 	session.Values["loggedin"] = true
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		log.Println("Error saving session:", err)
+		logError(err)
 		c.JSON(500, gin.H{"error": "session save error"})
 		return
 	}
@@ -113,6 +119,7 @@ func systemInfoHandler(c *gin.Context) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Fatal(err)
+		logError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get hostname"})
 		return
 	}
@@ -120,6 +127,7 @@ func systemInfoHandler(c *gin.Context) {
 	kernelVersion, err := exec.Command("uname", "-r").Output()
 	if err != nil {
 		log.Fatal(err)
+		logError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get kernel version"})
 		return
 	}
@@ -134,6 +142,7 @@ func diskUsageHandler(c *gin.Context) {
 	usageStat, err := disk.Usage("/")
 	if err != nil {
 		log.Println("Error getting disk usage:", err)
+		logError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get disk usage"})
 		return
 	}
@@ -152,6 +161,7 @@ func reboot(c *gin.Context) {
 	err := exec.Command("reboot").Run()
 	if err != nil {
 		log.Fatal(err)
+		logError(err)
 	}
 	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
 }
@@ -161,6 +171,7 @@ func wsHandler(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println("Failed to set WebSocket upgrade:", err)
+		logError(err)
 		return
 	}
 	defer conn.Close()
@@ -169,6 +180,7 @@ func wsHandler(c *gin.Context) {
 		usage, err := cpu.Percent(0, false)
 		if err != nil {
 			log.Println("Error getting CPU usage:", err)
+			logError(err)
 			break
 		}
 
@@ -176,6 +188,7 @@ func wsHandler(c *gin.Context) {
 		err = conn.WriteJSON(gin.H{"cpu_usage": usage[0]})
 		if err != nil {
 			log.Println("Error writing WebSocket message:", err)
+			logError(err)
 			break
 		}
 
@@ -191,6 +204,7 @@ func main() {
 	err := router.SetTrustedProxies([]string{"127.0.0.1"})
 	if err != nil {
 		log.Fatal("Error setting trusted proxies:", err)
+		logError(err)
 	}
 
 	router.Static("/static", "./static")
@@ -219,5 +233,6 @@ func main() {
 	err = router.Run(":3030")
 	if err != nil {
 		log.Fatal("Error starting the server:", err)
+		logError(err)
 	}
 }
