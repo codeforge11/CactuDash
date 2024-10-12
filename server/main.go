@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/gob"
 	"log"
 	"net/http"
 	"os"
@@ -24,7 +25,20 @@ type Credentials struct {
 	Password string `form:"password" json:"password"`
 }
 
-var store = sessions.NewCookieStore([]byte("secret-key"))
+var store sessions.Store
+
+func init() {
+	gob.Register(time.Time{})
+	store = sessions.NewCookieStore([]byte("secret-key"))
+	cookieStore := store.(*sessions.CookieStore)
+
+	cookieStore.Options = &sessions.Options{
+		MaxAge:   int(sessionExpiration.Seconds()),
+		HttpOnly: true,
+	}
+}
+
+var sessionExpiration = 30 * time.Minute // session time
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -48,6 +62,15 @@ func checkAuthenticated() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		if session.Values["expires_at"] == nil || time.Now().After(session.Values["expires_at"].(time.Time)) {
+			session.Values["loggedin"] = false
+			session.Save(c.Request, c.Writer)
+			c.Redirect(http.StatusFound, "/")
+			c.Abort()
+			return
+		}
+
 		c.Next()
 	}
 }
@@ -105,6 +128,7 @@ func loginHandler(c *gin.Context) {
 	}
 
 	session.Values["loggedin"] = true
+	session.Values["expires_at"] = time.Now().Add(sessionExpiration)
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		log.Println("Error saving session:", err)
 		logError(err)
@@ -228,7 +252,7 @@ func main() {
 
 	router.GET("/cactu-dash", cactuDashDataHandler)
 
-	router.POST("/reboot", reboot)
+	router.POST("/reboot", reboot) //Reboot function
 
 	err = router.Run(":3030")
 	if err != nil {
