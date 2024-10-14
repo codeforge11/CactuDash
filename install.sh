@@ -46,7 +46,28 @@ add_user_to_docker_group() {
     sudo usermod -aG docker $USER
 }
 
-# Main installation function
+# Function to install and configure MariaDB
+install_mariadb_server() {
+    echo "Installing MariaDB..."
+    sudo apt update -y
+    sudo apt install -y mariadb-server
+
+    echo "Configuring MariaDB..."
+    sudo systemctl start mariadb
+    sudo systemctl enable mariadb
+
+    sudo mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('CactuDash');"
+    sudo mysql -e "CREATE DATABASE CactuDB;"
+    sudo mysql -e "USE CactuDB; CREATE TABLE userlogin (id SMALLINT(3) UNSIGNED PRIMARY KEY AUTO_INCREMENT, username TEXT NOT NULL, password CHAR(60) NOT NULL);"
+    sudo mysql -e "INSERT INTO userlogin VALUES (NULL, 'admin', '\$2a\$10\$VXivP/o1tuQaALdmdECeyOAVfF830qgxcv3Nw71ATSD3RNz3qJMBa');"
+
+    echo "Configuring MariaDB to listen on port 3031..."
+    sudo sed -i "s/port\s*=\s*3306/port = 3031/" /etc/mysql/mariadb.conf.d/50-server.cnf
+    sudo systemctl restart mariadb
+
+    echo "MariaDB installation and configuration complete!"
+}
+
 main() {
     ARCH=$(detect_arch)
     OS=$(detect_os)
@@ -76,6 +97,7 @@ main() {
     esac
 
     add_user_to_docker_group
+    install_mariadb_server
     echo "Installation complete. Please reboot or log in again for the changes to take effect."
 }
 
