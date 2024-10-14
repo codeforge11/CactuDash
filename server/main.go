@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"strings"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 
@@ -46,6 +46,15 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+func connectDB() (*sql.DB, error) {
+	connStr := "root:CactuDash@tcp(127.0.0.1:3031)/CactuDB" //Conect to MariaDB
+	db, err := sql.Open("mysql", connStr)
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
 func checkAuthenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := store.Get(c.Request, "session-name")
@@ -73,14 +82,6 @@ func checkAuthenticated() gin.HandlerFunc {
 
 		c.Next()
 	}
-}
-
-func connectDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "./database/CactuDash.db")
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
 }
 
 func loginHandler(c *gin.Context) {
@@ -148,17 +149,11 @@ func systemInfoHandler(c *gin.Context) {
 		return
 	}
 
-	kernelVersion, err := exec.Command("uname", "-r").Output()
-	if err != nil {
-		log.Fatal(err)
-		logError(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get kernel version"})
-		return
-	}
+	kernelVersion := runtime.GOOS
 
 	c.JSON(http.StatusOK, gin.H{
 		"hostname":       hostname,
-		"kernel_version": strings.TrimSpace(string(kernelVersion)),
+		"kernel_version": kernelVersion,
 	})
 }
 
@@ -184,7 +179,6 @@ func cactuDashDataHandler(c *gin.Context) {
 func reboot(c *gin.Context) {
 	err := exec.Command("reboot").Run()
 	if err != nil {
-		log.Fatal(err)
 		logError(err)
 	}
 	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
