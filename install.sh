@@ -3,6 +3,8 @@ detect_arch() {
     case "$(uname -m)" in
         x86_64) echo "amd64" ;;
         aarch64) echo "arm64" ;;
+        armv7l) echo "armv7" ;;
+        i386|i686) echo "386" ;;
         *) echo "Unsupported processor architecture: $(uname -m)"; exit 1 ;;
     esac
 }
@@ -71,7 +73,7 @@ install_mariadb_server() {
 main() {
     ARCH=$(detect_arch)
     OS=$(detect_os)
-    GO_VERSION="1.23.1"
+    GO_VERSION="1.23.2"
     GO_TAR="go${GO_VERSION}.linux-${ARCH}.tar.gz"
     GO_URL="https://go.dev/dl/${GO_TAR}"
 
