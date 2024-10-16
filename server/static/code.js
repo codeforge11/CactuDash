@@ -78,6 +78,17 @@ async function reboot() {
     }
 }
 
+// Update function
+async function update() {
+    try {
+        const response = await fetch('/update', { method: "POST" });
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 function openDocs() {
     window.location.href = "https://github.com/codeforge11/CactuDash/wiki"; 
 }

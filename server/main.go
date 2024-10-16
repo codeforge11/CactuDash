@@ -215,6 +215,18 @@ func wsHandler(c *gin.Context) {
 	}
 }
 
+func update(c *gin.Context) {
+	cmd := exec.Command("/bin/sh", "static/scripts/update.sh")
+	err := cmd.Run()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
+		logError(err)
+		return
+
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
+}
+
 func main() {
 	router := gin.Default()
 
@@ -247,6 +259,8 @@ func main() {
 	router.GET("/cactu-dash", cactuDashDataHandler)
 
 	router.POST("/reboot", reboot) //Reboot function
+
+	router.POST("/update", update) //Update function
 
 	err = router.Run(":3030")
 	if err != nil {

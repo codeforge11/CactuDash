@@ -72,18 +72,14 @@ install_mariadb_server() {
     echo "Installing MariaDB..."
     sudo apt update -y
     sudo apt install -y mariadb-server
-
     echo "Configuring MariaDB..."
     sudo systemctl start mariadb
     sudo systemctl enable mariadb
-
-    read -sp "Enter MariaDB root password: " root_password
-    echo
-
+    root_password="CactuDash"
     sudo mysql -uroot -p"$root_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'CactuDash';"
     sudo mysql -uroot -p"CactuDash" -e "CREATE DATABASE CactuDB;"
     sudo mysql -uroot -p"CactuDash" -e "USE CactuDB; CREATE TABLE userlogin (id SMALLINT(3) UNSIGNED PRIMARY KEY AUTO_INCREMENT, username TEXT NOT NULL, password CHAR(60) NOT NULL);"
-    sudo mysql -uroot -p"CactuDash" -e "INSERT INTO userlogin VALUES (NULL, 'admin', '\$2a\$10\$VXivP/o1tuQaALdmdECeyOAVfF830qgxcv3Nw71ATSD3RNz3qJMBa');"
+    sudo mysql -uroot -p"CactuDash" -e "USE CactuDB; INSERT INTO userlogin VALUES (NULL, 'admin', '\$2a\$10\$VXivP/o1tuQaALdmdECeyOAVfF830qgxcv3Nw71ATSD3RNz3qJMBa');"
 
     echo "Configuring MariaDB to listen on port 3031..."
     sudo sed -i "s/port\s*=\s*3306/port = 3031/" /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -91,6 +87,7 @@ install_mariadb_server() {
 
     echo "MariaDB installation and configuration complete!"
 }
+
 
 # Function to build Go from source
 build_go() {
