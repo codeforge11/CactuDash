@@ -19,6 +19,8 @@ detect_os() {
         . /etc/os-release
         case "${ID,,}" in
             raspbian) echo "raspbian" ;;
+            ubuntu) echo "ubuntu" ;;
+            debian) echo "debian" ;;
             *) echo "${ID,,}" ;;
         esac
     else
@@ -89,7 +91,6 @@ install_mariadb_server() {
 
     echo "MariaDB installation and configuration complete!"
 }
-
 
 # Function to build Go from source
 build_go() {
@@ -184,6 +185,13 @@ main() {
         n|N ) echo "Installation aborted."; exit 0 ;;
         * ) echo "Invalid choice. Installation aborted."; exit 1 ;;
     esac
+
+   
+    read -sp "Enter root password: " root_password
+    echo
+
+    # Verify root password
+    echo "$root_password" | sudo -S echo "Root password verified." || { echo "Invalid root password. Installation aborted."; exit 1; }
 
     install_go
 
