@@ -22,7 +22,7 @@
 
     <div class="container">
         <div class="dynamic-card">
-            <h2>System Information</h2>
+            <h3>System Information</h3>
             <table>
                 <tr>
                     <td>Hostname:</td>
@@ -33,22 +33,25 @@
                     <td id="kernel">kernel</td>
                 </tr>
                 <tr>
-                    <td>CactuDash version:</td>
-                    <td id="CactuDash_version">v1.0</td>
+                    <td>Arch:</td>
+                    <td id="arch">Arch</td>
                 </tr>
-
+                <tr>
+                    <td>CactuDash version:</td>
+                    <td id="CactuDash_version"></td>
+                </tr>
                 
             </table>
         </div>
 
         <div class="dynamic-card">
-            <h2>CPU Usage</h2>
+            <h3>CPU Usage</h3>
             <canvas id="cpuCanvas" width="100" height="100"></canvas>
             <span id="cpuPercentage">Loading...</span>
         </div>
 
         <div class="dynamic-card">
-            <h2>Disk Usage</h2>
+            <h3>Disk Usage</h3>
             <div class="progress-container">
                 <div class="progress-bar" id="disk-progress"></div>
             </div>

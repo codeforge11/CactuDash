@@ -9,10 +9,12 @@ CactuDash is a minimalist and highly optimized dashboard designed for efficient 
 
 ## Supported Operating Systems
 
-| OS             | Status |
-|----------------|:------:|
-| Debian/Ubuntu  |   ✅   |
-| Red Hat/Fedora |   ✅   |
+| OS              | Status |
+|-----------------|:------:|
+| Debian/Ubuntu   |   ✅   |
+| Raspbian        |   ✅   |
+| Red Hat/Fedora  |   ✅   |
+| Windows         |   ❌   |
 
 
 ## Installation and other information

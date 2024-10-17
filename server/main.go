@@ -154,6 +154,7 @@ func systemInfoHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"hostname":       hostname,
 		"kernel_version": kernelVersion,
+		"arch":           runtime.GOARCH,
 	})
 }
 

@@ -34,10 +34,12 @@ async function SysInfo() {
         const data = await response.json();
         document.getElementById('hostname').innerText = data.hostname;
         document.getElementById('kernel').innerText = data.kernel_version;
+        document.getElementById('arch').innerText = data.arch;
 
         const cactuDashResponse = await fetch('/cactu-dash');
         const cactuDashData = await cactuDashResponse.json();
-        document.getElementById('CactuDash_version').innerText = cactuDashData.version;
+        const versionElement = document.getElementById('CactuDash_version');
+        versionElement.innerText = cactuDashData.version;
 
         // Fetch disk usage
         const diskUsageResponse = await fetch('/disk-usage');
