@@ -136,4 +136,26 @@ socket.onmessage = function (event) {
     CpuUsage(cpuUsage);
 };
 
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/api/containers')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('dockerTable').getElementsByTagName('tbody')[0];
+            data.forEach(container => {
+                let row = tbody.insertRow();
+                row.insertCell(0).innerText = container.Id;
+                row.insertCell(1).innerText = container.Image;
+                row.insertCell(2).innerText = container.Status;
+                let actionsCell = row.insertCell(3);
+                let toggleButton = document.createElement('button');
+                toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
+                toggleButton.onclick = function () {
+                    fetch('/api/toggle/' + container.Id, { method: 'POST' })
+                        .then(() => location.reload());
+                };
+                actionsCell.appendChild(toggleButton);
+            });
+        });
+});
+
 SysInfo();

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,12 @@ import (
 type Credentials struct {
 	Username string `form:"username" json:"username"`
 	Password string `form:"password" json:"password"`
+}
+
+type Container struct {
+	Id     string `json:"Id"`
+	Image  string `json:"Image"`
+	Status string `json:"Status"`
 }
 
 var store sessions.Store
@@ -228,6 +235,42 @@ func update(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
 }
 
+// Function to get Docker containers
+func getContainers(c *gin.Context) {
+	out, err := exec.Command("docker", "ps", "--format", "{{.ID}};{{.Image}};{{.Status}}").Output()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var containers []Container
+	for _, line := range strings.Split(string(out), "\n") {
+		if line != "" {
+			fields := strings.Split(line, ";")
+			containers = append(containers, Container{Id: fields[0], Image: fields[1], Status: fields[2]})
+		}
+	}
+
+	c.JSON(http.StatusOK, containers)
+}
+
+func start_stopContainer(c *gin.Context) {
+	id := strings.TrimPrefix(c.Param("id"), "/toggle/")
+	out, err := exec.Command("docker", "inspect", "--format={{.State.Running}}", id).Output()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	running := strings.TrimSpace(string(out))
+	if running == "true" {
+		exec.Command("docker", "stop", id).Run()
+	} else {
+		exec.Command("docker", "start", id).Run()
+	}
+	c.Status(http.StatusNoContent)
+}
+
 func main() {
 	router := gin.Default()
 
@@ -262,6 +305,10 @@ func main() {
 	router.POST("/reboot", reboot) //Reboot function
 
 	router.POST("/update", update) //Update function
+
+	router.GET("/api/containers", getContainers)
+
+	router.POST("/api/toggle/:id", start_stopContainer)
 
 	err = router.Run(":3030")
 	if err != nil {
