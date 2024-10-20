@@ -92,7 +92,7 @@ async function update() {
 }
 
 function openDocs() {
-    window.location.href = "https://github.com/codeforge11/CactuDash/wiki"; 
+    window.open("https://github.com/codeforge11/CactuDash/wiki", '_blank').focus(); 
 }
 
 function CpuUsage(percentage) {

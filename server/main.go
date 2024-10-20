@@ -96,7 +96,7 @@ func loginHandler(c *gin.Context) {
 	if err != nil {
 		log.Println("Error connecting to database:", err)
 		logError(err)
-		c.JSON(500, gin.H{"error": "database connection error"})
+		c.JSON(500, gin.H{"error": "The database has encountered an issue"})
 		return
 	}
 	defer db.Close()
