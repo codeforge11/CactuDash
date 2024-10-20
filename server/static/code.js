@@ -137,7 +137,7 @@ socket.onmessage = function (event) {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('/api/containers')
+    fetch('/containers')
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById('dockerTable').getElementsByTagName('tbody')[0];
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 let toggleButton = document.createElement('button');
                 toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
                 toggleButton.onclick = function () {
-                    fetch('/api/toggle/' + container.Id, { method: 'POST' })
+                    fetch('/toggle/' + container.Id, { method: 'POST' })
                         .then(() => location.reload());
                 };
                 actionsCell.appendChild(toggleButton);

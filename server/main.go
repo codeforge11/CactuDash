@@ -306,9 +306,9 @@ func main() {
 
 	router.POST("/update", update) //Update function
 
-	router.GET("/api/containers", getContainers)
+	router.GET("/containers", getContainers)
 
-	router.POST("/api/toggle/:id", start_stopContainer)
+	router.POST("/toggle/:id", start_stopContainer)
 
 	err = router.Run(":3030")
 	if err != nil {
