@@ -7,23 +7,16 @@
 }
 
 body {
-
-  background-image: url("/static/img/background.png");
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
+  background: url("/static/img/background.png") no-repeat fixed center/cover;
   overflow: hidden;
   resize: none;
-  margin: 0;  
-  padding: 0;
-
 }
 
 .login {
   width: 400px;
   backdrop-filter: blur(15px);
   background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 9px rgba(0, 0, 0, 0.3);
   margin: 100px auto;
 }
 
@@ -78,34 +71,30 @@ body {
   color: white;
   text-align: center;
   font-size: 60px;
-  margin-top: 0;
 }
 
 .dynamic-card {
   font-size: 1.2rem;
   padding: 1rem 2.5rem;
   border: none;
-  outline: none;
   border-radius: 0.4rem;
   text-transform: uppercase;
   background-color: rgb(14, 14, 26);
   color: rgb(234, 234, 234);
   font-weight: 700;
   transition: 0.6s;
-  box-shadow: 0px 0px 60px #1f4c65;
-  width: calc(33.333% - 20px); 
-  min-width: 200px; 
-  height: auto; 
+  box-shadow: 0 0 60px #1f4c65;
+  width: calc(33.333% - 20px);
+  min-width: 200px;
   text-align: center;
 }
 
-.check_for_updates{
-  width: 100px; 
-  height: 100px; 
-  background-image: url('images/dashboard_images/check_for_updates.svg'); 
-  background-size: cover; 
-  border: none; 
-  cursor: pointer; 
+.check_for_updates {
+  width: 100px;
+  height: 100px;
+  background: url('images/dashboard_images/check_for_updates.svg') no-repeat center/cover;
+  border: none;
+  cursor: pointer;
 }
 
 .progress-container {
@@ -132,18 +121,17 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px; 
+  padding: 10px;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  height: auto;
 }
 
 .container {
   margin-top: 100px;
-  padding: 10px; 
+  padding: 10px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -157,7 +145,7 @@ body {
 
 .container-buttons {
   display: flex;
-  gap: 10px; 
+  gap: 10px;
   justify-content: center;
   margin-top: 10px;
 }
@@ -166,16 +154,21 @@ body {
   font-size: large;
 }
 
-.RebootButton {
-  background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
-  border: 0;
+.RebootButton,
+.documentation {
   border-radius: 8px;
-  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
-  color: #FFFFFF;
-  font-size: 18px;
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  border: none;
+  display: inline-block;
+}
+
+.RebootButton {
+  background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  color: #FFFFFF;
+  font-size: 18px;
 }
 
 .RebootButton:hover {
@@ -190,13 +183,8 @@ body {
 
 .documentation {
   background-color: #00A7E1;
-  border-radius: 8px;
-  padding: 10px 20px;
   color: white;
   font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border: none;
 }
 
 .documentation:hover {
@@ -207,20 +195,75 @@ body {
   background-color: #005F87;
 }
 
-.documentation, .RebootButton {
-  display: inline-block;
-}
-
 #cpuCanvas {
   border-radius: 50%;
   background-color: #f0f0f0;
-  margin-right: 20px;  
+  margin-right: 20px;
   display: inline-block;
 }
 
 #cpuPercentage {
-  font-size: 24px;  
-  vertical-align: middle;  
+  font-size: 24px;
+  vertical-align: middle;
   font-weight: bold;
 }
 
+.table-containers {
+  text-align: center;
+  overflow: hidden;
+  width: 100%;
+  margin: 0 auto;
+  display: table;
+  table-layout: fixed;
+}
+
+.table-containers th h1 {
+  font-weight: bold;
+  font-size: 1em;
+  text-align: left;
+  color: #185875;
+}
+
+.table-containers td {
+  font-weight: normal;
+  font-size: 1em;
+  box-shadow: 0 2px 2px -2px #0E1119;
+  word-wrap: break-word;
+}
+
+.table-containers tr:nth-child(odd) {
+  background-color: #323C50;
+}
+
+.table-containers tr:nth-child(even) {
+  background-color: #2C3446;
+}
+
+.table-containers th {
+  background-color: #1F2739;
+}
+
+.table-containers td:first-child {
+  color: #FB667A;
+}
+
+.table-containers tr:hover {
+  background-color: #464A52;
+  box-shadow: 0 6px 6px -6px #0E1119;
+}
+
+.table-containers td:hover {
+  background-color: #FFF842;
+  color: #403E10;
+  font-weight: bold;
+  box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
+  transform: translate3d(6px, -6px, 0);
+  transition: all 0.4s linear;
+}
+
+@media (max-width: 800px) {
+  .table-containers td:nth-child(4),
+  .table-containers th:nth-child(4) {
+    display: none;
+  }
+}
