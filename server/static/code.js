@@ -33,8 +33,16 @@ async function SysInfo() {
         const response = await fetch('/system-info');
         const data = await response.json();
         document.getElementById('hostname').innerText = data.hostname;
-        document.getElementById('kernel').innerText = data.kernel_version;
         document.getElementById('arch').innerText = data.arch;
+
+        var supportedOS = ["Linux","LINUX","linux","Raspbian","raspbian","Ubuntu","ubuntu","Debian","debian","fedora","Fedora"]; //List of supported os
+        if (supportedOS.includes(data.nameOfOs)){
+            document.getElementById('OS_name').innerText = data.nameOfOs;
+        }
+        else{
+            console.log("Error: Unsupported system")
+            document.getElementById('OS_name').innerText = data.nameOfOs;
+        }
 
         const cactuDashResponse = await fetch('/cactu-dash');
         const cactuDashData = await cactuDashResponse.json();
@@ -140,24 +148,29 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('/containers')
         .then(response => response.json())
         .then(data => {
-            const tbody = document.getElementById('dockerTable').getElementsByTagName('tbody')[0];
-            data.forEach(container => {
-                let row = tbody.insertRow();
+            if (data) {
+                const tbody = document.getElementById('dockerTable').getElementsByTagName('tbody')[0];
+                data.forEach(container => {
+                    if (container.Port !== 3031) //ignore 3031 port
+                        {
+                        let row = tbody.insertRow();
 
-                row.insertCell(0).innerText = container.Id;
-                row.insertCell(1).innerText = container.Image;
-                row.insertCell(2).innerText = container.Status;
+                        row.insertCell(0).innerText = container.Id;
+                        row.insertCell(1).innerText = container.Image;
+                        row.insertCell(2).innerText = container.Status;
 
-                let actionsCell = row.insertCell(3);
-                let toggleButton = document.createElement('button');
-                
-                toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
-                toggleButton.onclick = function () {
-                    fetch('/toggle/' + container.Id, { method: 'POST' })
-                        .then(() => location.reload());
-                };
-                actionsCell.appendChild(toggleButton);
-            });
+                        let actionsCell = row.insertCell(3);
+                        let toggleButton = document.createElement('button');
+                        toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
+                        toggleButton.onclick = function () {
+                            fetch('/toggle/' + container.Id, { method: 'POST' })
+                                .then(() => location.reload());
+                        };
+
+                        actionsCell.appendChild(toggleButton);
+                    }
+                });
+            }
         });
 });
 

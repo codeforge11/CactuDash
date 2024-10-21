@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"encoding/gob"
 	"log"
@@ -117,7 +118,7 @@ func loginHandler(c *gin.Context) {
 		} else {
 			log.Println("Error querying database:", err)
 			logError(err)
-			c.JSON(500, gin.H{"error": "database query error"})
+			c.JSON(500, gin.H{"error": "database didn't work"})
 		}
 		return
 	}
@@ -156,12 +157,36 @@ func systemInfoHandler(c *gin.Context) {
 		return
 	}
 
-	kernelVersion := runtime.GOOS
+	nameOfOs := runtime.GOOS
+	arch := runtime.GOARCH
+
+	if nameOfOs == "linux" {
+		file, err := os.Open("/etc/os-release") //for detect distro name
+		if err != nil {
+			log.Println("Error opening /etc/os-release:", err)
+			logError(err)
+		} else {
+			defer file.Close()
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				line := scanner.Text()
+				if strings.HasPrefix(line, "NAME=") {
+					nameOfOs = strings.TrimPrefix(line, "NAME=")
+					nameOfOs = strings.Trim(nameOfOs, `"`)
+					break
+				}
+			}
+			if err := scanner.Err(); err != nil {
+				log.Println("Error reading file:", err)
+				logError(err)
+			}
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"hostname":       hostname,
-		"kernel_version": kernelVersion,
-		"arch":           runtime.GOARCH,
+		"hostname": hostname,
+		"nameOfOs": nameOfOs,
+		"arch":     arch,
 	})
 }
 
@@ -237,7 +262,7 @@ func update(c *gin.Context) {
 
 // Function to get Docker containers
 func getContainers(c *gin.Context) {
-	out, err := exec.Command("docker", "ps", "--format", "{{.ID}};{{.Image}};{{.Status}}").Output()
+	out, err := exec.Command("docker", "ps", "--format", "{{.ID}};{{.Image}};{{.Ports}};{{.Status}}").Output()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -247,7 +272,9 @@ func getContainers(c *gin.Context) {
 	for _, line := range strings.Split(string(out), "\n") {
 		if line != "" {
 			fields := strings.Split(line, ";")
-			containers = append(containers, Container{Id: fields[0], Image: fields[1], Status: fields[2]})
+			if !strings.Contains(fields[2], "3031") { // ignore 3031 port
+				containers = append(containers, Container{Id: fields[0], Image: fields[1], Status: fields[3]})
+			}
 		}
 	}
 

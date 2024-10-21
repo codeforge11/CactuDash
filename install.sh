@@ -21,6 +21,7 @@ detect_os() {
             raspbian) echo "raspbian" ;;
             ubuntu) echo "ubuntu" ;;
             debian) echo "debian" ;;
+            fedora) echo "fedora" ;;
             *) echo "${ID,,}" ;;
         esac
     else
