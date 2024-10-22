@@ -27,6 +27,7 @@ type Credentials struct {
 	Password string `form:"password" json:"password"`
 }
 
+// Structure for containers
 type Container struct {
 	Id     string `json:"Id"`
 	Image  string `json:"Image"`

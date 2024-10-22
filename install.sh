@@ -1,14 +1,14 @@
 # Function to detect processor architecture
 detect_arch() {
     case "$(uname -m)" in
-        x86_64) echo "amd64" ;;      
-        aarch64) echo "arm64" ;;    
-        armv7l) echo "armv7" ;;        
-        armv6l) echo "armv6" ;;        
-        i386|i686) echo "386" ;;    
-        ppc64le) echo "ppc64le" ;;    
-        s390x) echo "s390x" ;;          
-        riscv64) echo "riscv64" ;;      
+        x86_64) echo "amd64" ;;
+        aarch64) echo "arm64" ;;
+        armv7l) echo "armv7" ;;
+        armv6l) echo "armv6" ;;
+        i386|i686) echo "386" ;;
+        ppc64le) echo "ppc64le" ;;
+        s390x) echo "s390x" ;;
+        riscv64) echo "riscv64" ;;
         *) echo "Unsupported processor architecture: $(uname -m)"; exit 1 ;;
     esac
 }
@@ -89,70 +89,6 @@ install_mariadb_server() {
     echo "MariaDB installation and configuration complete!"
 }
 
-
-# Function to build Go from source
-build_go() {
-    echo "Building Go from source for architecture: $ARCH"
-    wget https://golang.org/dl/go1.23.2.src.tar.gz
-    tar -xzf go1.23.2.src.tar.gz
-    cd go
-    bash make.bash
-    cd ..
-    sudo rm -rf go1.23.2.src.tar.gz go
-}
-
-# Function to install or update Go
-install_go() {
-    ARCH=$(detect_arch)
-    OS=$(detect_os)
-
-    # Check if Go is already installed
-    if command -v go &> /dev/null; then
-        echo "Go is already installed. Updating..."
-        if [[ "$ARCH" == "armv6" ]]; then
-            build_go
-        else
-            GO_VERSION="1.23.2"
-            GO_TAR="go${GO_VERSION}.${OS}-${ARCH}.tar.gz"
-            GO_URL="https://golang.org/dl/${GO_TAR}"
-
-            echo "Downloading Go for architecture: $ARCH"
-            wget -q "$GO_URL" || { echo "Error downloading Go"; exit 1; }
-            sudo rm -rf /usr/local/go
-            sudo tar -C /usr/local -xzf "$GO_TAR"
-            rm "$GO_TAR"
-        fi
-    else
-        echo "Installing Go for architecture: $ARCH"
-        if [[ "$ARCH" == "armv6" ]]; then
-            build_go
-        else
-            GO_VERSION="1.23.2"
-            GO_TAR="go${GO_VERSION}.${OS}-${ARCH}.tar.gz"
-            GO_URL="https://golang.org/dl/${GO_TAR}"
-
-            if wget --spider "$GO_URL" 2>/dev/null; then
-                wget -q "$GO_URL" || { echo "Error downloading Go"; exit 1; }
-            else
-                echo "Go binary for architecture $ARCH is not available."
-                exit 1
-            fi
-
-            sudo rm -rf /usr/local/go
-            sudo tar -C /usr/local -xzf "$GO_TAR"
-            rm "$GO_TAR"
-        fi
-    fi
-
-    # Add Go to PATH
-    if ! grep -q "/usr/local/go/bin" ~/.bashrc; then
-        echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
-        source ~/.bashrc
-    fi
-
-    echo "Go installation/upgrade complete!"
-}
-
 clear_after_installation() {
     echo "Cleaning up installation files..."
 
@@ -190,8 +126,6 @@ main() {
 
     # Verify root password
     echo "$root_password" | sudo -S echo "Root password verified." || { echo "Invalid root password. Installation aborted."; exit 1; }
-
-    install_go
 
     case "$OS" in
         fedora) install_docker_fedora ;;

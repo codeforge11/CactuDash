@@ -41,6 +41,7 @@ async function SysInfo() {
         }
         else{
             console.log("Error: Unsupported system")
+            console.log("Please visit: https://github.com/codeforge11/CactuDash/wiki/Prerequisites")
             document.getElementById('OS_name').innerText = data.nameOfOs;
         }
 
@@ -161,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         let actionsCell = row.insertCell(3);
                         let toggleButton = document.createElement('button');
+                        
                         toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
                         toggleButton.onclick = function () {
                             fetch('/toggle/' + container.Id, { method: 'POST' })
