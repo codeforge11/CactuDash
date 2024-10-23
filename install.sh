@@ -68,25 +68,17 @@ add_user_to_docker_group() {
     sudo usermod -aG docker $USER
 }
 
-# Function to install and configure MariaDB
-install_mariadb_server() {
-    echo "Installing MariaDB..."
-    sudo apt update -y
-    sudo apt install -y mariadb-server
-    echo "Configuring MariaDB..."
-    sudo systemctl start mariadb
-    sudo systemctl enable mariadb
+# Function to install and configure Postgresql
+install_postgresql(){
+    echo "Installing PostgreSQL on Docker..."
     root_password="CactuDash"
-    sudo mysql -uroot -p"$root_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'CactuDash';"
-    sudo mysql -uroot -p"CactuDash" -e "CREATE DATABASE CactuDB;"
-    sudo mysql -uroot -p"CactuDash" -e "USE CactuDB; CREATE TABLE userlogin (id SMALLINT(3) UNSIGNED PRIMARY KEY AUTO_INCREMENT, username TEXT NOT NULL, password CHAR(60) NOT NULL);"
-    sudo mysql -uroot -p"CactuDash" -e "USE CactuDB; INSERT INTO userlogin VALUES (NULL, 'admin', '\$2a\$10\$VXivP/o1tuQaALdmdECeyOAVfF830qgxcv3Nw71ATSD3RNz3qJMBa');"
 
-    echo "Configuring MariaDB to listen on port 3031..."
-    sudo sed -i "s/port\s*=\s*3306/port = 3031/" /etc/mysql/mariadb.conf.d/50-server.cnf
-    sudo systemctl restart mariadb
+    docker run -d --name CactuDash_postgres --restart unless-stopped -e POSTGRES_PASSWORD=$root_password -p 3031:5432 postgres:latest
 
-    echo "MariaDB installation and configuration complete!"
+    sleep 100
+
+    docker exec -i CactuDash_postgres psql -U postgres -d postgres -c "CREATE TABLE userlogin (id SERIAL PRIMARY KEY, username TEXT NOT NULL, password CHAR(125) NOT NULL);"
+    docker exec -i CactuDash_postgres psql -U postgres -d postgres -c "INSERT INTO userlogin (username, password) VALUES ('admin', '\$2a\$10\$VXivP/o1tuQaALdmdECeyOAVfF830qgxcv3Nw71ATSD3RNz3qJMBa');"
 }
 
 clear_after_installation() {
@@ -117,7 +109,7 @@ main() {
     echo " | || || | "
     echo " |__   __| "
     echo "    |_|    "
-    echo "@CactuDash created by Codeforge11"
+    echo "CactuDash created by @codeforge11"
     echo ""
     echo "Detected system: $OS"
     echo "Detected architecture: $ARCH"
@@ -143,7 +135,7 @@ main() {
     esac
 
     add_user_to_docker_group
-    install_mariadb_server
+    install_postgresql
     clear_after_installation
     echo "Installation complete. Please reboot or log in again for the changes to take effect."
 }

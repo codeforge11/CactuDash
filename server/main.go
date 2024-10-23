@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
+	_ "github.com/lib/pq"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 
@@ -56,8 +56,8 @@ var upgrader = websocket.Upgrader{
 }
 
 func connectDB() (*sql.DB, error) {
-	connStr := "root:CactuDash@tcp(127.0.0.1:3031)/CactuDB" //Conect to MariaDB
-	db, err := sql.Open("mysql", connStr)
+	connStr := "postgres://postgres:CactuDash@127.0.0.1:3031/postgres?sslmode=disable" // Connect to PostgreSQL
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func loginHandler(c *gin.Context) {
 
 	var username string
 	var password string
-	err = db.QueryRow("SELECT username, password FROM userlogin WHERE username = ?", creds.Username).Scan(&username, &password)
+	err = db.QueryRow("SELECT username, password FROM userlogin WHERE username = $1", creds.Username).Scan(&username, &password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(401, gin.H{"error": "invalid credentials"})
