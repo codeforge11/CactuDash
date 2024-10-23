@@ -211,10 +211,24 @@ func cactuDashDataHandler(c *gin.Context) {
 }
 
 func reboot(c *gin.Context) {
-	err := exec.Command("reboot").Run()
+	session, err := store.Get(c.Request, "session-name")
 	if err != nil {
 		logError(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
+		return
 	}
+
+	// End the session
+	session.Values["loggedin"] = false
+	session.Save(c.Request, c.Writer)
+
+	err = exec.Command("reboot").Run()
+	if err != nil {
+		logError(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
 }
 
