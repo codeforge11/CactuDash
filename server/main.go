@@ -203,6 +203,7 @@ func diskUsageHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"used":  usageStat.Used,
 		"total": usageStat.Total,
+		"free":  usageStat.Free,
 	})
 }
 

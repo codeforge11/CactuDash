@@ -56,27 +56,30 @@ async function SysInfo() {
 
         const usedDiskMB = (diskUsageData.used / (1024 * 1024)).toFixed(2); // Convert to MB
         const totalDiskMB = (diskUsageData.total / (1024 * 1024)).toFixed(2); // Convert to MB
+        const freeDiskMB = (diskUsageData.free / (1024 * 1024)).toFixed(2); // Convert to MB
+        
         const usedDiskGB = (diskUsageData.used / (1024 * 1024 * 1024)).toFixed(2); // Convert to GB
         const totalDiskGB = (diskUsageData.total / (1024 * 1024 * 1024)).toFixed(2); // Convert to GB
+        const freeDiskGB = (diskUsageData.free / (1024 * 1024 * 1024)).toFixed(2); // Convert to GB
 
         // Calculate percentage usage
         const usagePercentage = ((diskUsageData.used / diskUsageData.total) * 100).toFixed(2);
 
         // Update the text and progress bar
-        updateDiskUsage(usedDiskMB, totalDiskMB, usedDiskGB, totalDiskGB, usagePercentage);
+        updateDiskUsage(usedDiskMB, totalDiskMB, usedDiskGB, totalDiskGB, freeDiskMB, freeDiskGB, usagePercentage);
     } catch (error) {
         console.error('Error:', error);
     }
 }
 
-function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, percentage) {
+function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, percentage) {
     // Update the progress bar
     const progressBar = document.getElementById('disk-progress');
     progressBar.style.width = percentage + '%';
 
     // Update the disk usage text
     const diskUsageText = document.getElementById('disk-usage');
-    diskUsageText.innerText = `Used: ${usedGB} GB (${usedMB} MB) / Total: ${totalGB} GB (${totalMB} MB) [${percentage}%]`;
+    diskUsageText.innerText = `Used: ${usedGB} GB (${usedMB} MB) / Free: ${freeGB} GB (${freeMB} MB) / Total: ${totalGB} GB (${totalMB} MB) [${percentage}%]` ;
 }
 
 async function reboot() {
