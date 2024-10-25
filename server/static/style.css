@@ -267,3 +267,7 @@ body {
     display: none;
   }
 }
+
+#dockerTable {
+  width: 100%;
+}
