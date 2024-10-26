@@ -75,10 +75,10 @@ install_postgresql(){
 
     docker run -d --name CactuDash_postgres --restart unless-stopped -e POSTGRES_PASSWORD=$root_password -p 3031:5432 postgres:latest
 
-    sleep 100
+    sleep 120
 
     docker exec -i CactuDash_postgres psql -U postgres -d postgres -c "CREATE TABLE userlogin (id SERIAL PRIMARY KEY, username TEXT NOT NULL, password CHAR(125) NOT NULL);"
-    docker exec -i CactuDash_postgres psql -U postgres -d postgres -c "INSERT INTO userlogin (username, password) VALUES ('admin', '\$2a\$10\$VXivP/o1tuQaALdmdECeyOAVfF830qgxcv3Nw71ATSD3RNz3qJMBa');"
+    docker exec -i CactuDash_postgres psql -U postgres -d postgres -c "INSERT INTO userlogin (username, password) VALUES ('admin', '$2a$10$eUY8TH.NXKdR2cWYyYLFZu1IyiijSKaDTEXr6HELPod01sjz3EJU.');"
 }
 
 clear_after_installation() {
