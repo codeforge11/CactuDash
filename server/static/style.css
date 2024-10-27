@@ -252,22 +252,6 @@ body {
   box-shadow: 0 6px 6px -6px #0E1119;
 }
 
-.table-containers td:hover {
-  background-color: #FFF842;
-  color: #403E10;
-  font-weight: bold;
-  box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
-  transform: translate3d(6px, -6px, 0);
-  transition: all 0.4s linear;
-}
-
-@media (max-width: 800px) {
-  .table-containers td:nth-child(4),
-  .table-containers th:nth-child(4) {
-    display: none;
-  }
-}
-
 #dockerTable {
   width: 100%;
 }

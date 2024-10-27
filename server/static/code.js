@@ -150,20 +150,26 @@ socket.onmessage = function (event) {
 
 document.addEventListener('DOMContentLoaded', function () {
     fetch('/containers')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data) {
                 const tbody = document.getElementById('dockerTable').getElementsByTagName('tbody')[0];
                 data.forEach(container => {
                     if (container.Port !== 3031) //ignore 3031 port
-                        {
+                    {
                         let row = tbody.insertRow();
-
+                        
                         row.insertCell(0).innerText = container.Id;
-                        row.insertCell(1).innerText = container.Image;
-                        row.insertCell(2).innerText = container.Status;
+                        row.insertCell(1).innerText = container.Name;
+                        row.insertCell(2).innerText = container.Image;
+                        row.insertCell(3).innerText = container.Status;
 
-                        let actionsCell = row.insertCell(3);
+                        let actionsCell = row.insertCell(4);
                         let toggleButton = document.createElement('button');
                         
                         toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
@@ -176,6 +182,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             }
+        })
+        .catch(error => {
+            console.error('Error fetching containers:', error);
         });
 });
 

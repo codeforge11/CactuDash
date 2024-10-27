@@ -32,6 +32,7 @@ type Container struct {
 	Id     string `json:"Id"`
 	Image  string `json:"Image"`
 	Status string `json:"Status"`
+	Name   string `json:"Name"`
 }
 
 var store sessions.Store
@@ -278,9 +279,11 @@ func update(c *gin.Context) {
 
 // Function to get Docker containers
 func getContainers(c *gin.Context) {
-	out, err := exec.Command("docker", "ps", "-a", "--format", "{{.ID}};{{.Image}};{{.Ports}};{{.Status}}").Output()
+	out, err := exec.Command("docker", "ps", "-a", "--format", "{{.ID}};{{.Image}};{{.Ports}};{{.Status}};{{.Names}}").Output()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		log.Println("Error executing docker command:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error executing docker command"})
+		logError(err)
 		return
 	}
 
@@ -288,8 +291,12 @@ func getContainers(c *gin.Context) {
 	for _, line := range strings.Split(string(out), "\n") {
 		if line != "" {
 			fields := strings.Split(line, ";")
+			if len(fields) < 5 {
+				log.Println("Unexpected format in docker output:", line)
+				continue
+			}
 			if !strings.Contains(fields[2], "3031") { // ignore 3031 port
-				containers = append(containers, Container{Id: fields[0], Image: fields[1], Status: fields[3]})
+				containers = append(containers, Container{Id: fields[0], Image: fields[1], Status: fields[3], Name: fields[4]})
 			}
 		}
 	}
@@ -307,9 +314,17 @@ func start_stopContainer(c *gin.Context) {
 
 	running := strings.TrimSpace(string(out))
 	if running == "true" {
-		exec.Command("docker", "stop", id).Run()
+		if err := exec.Command("docker", "stop", id).Run(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to stop container"})
+			logError(err)
+			return
+		}
 	} else {
-		exec.Command("docker", "start", id).Run()
+		if err := exec.Command("docker", "start", id).Run(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start container"})
+			logError(err)
+			return
+		}
 	}
 	c.Status(http.StatusNoContent)
 }
