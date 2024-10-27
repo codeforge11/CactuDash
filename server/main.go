@@ -278,7 +278,7 @@ func update(c *gin.Context) {
 
 // Function to get Docker containers
 func getContainers(c *gin.Context) {
-	out, err := exec.Command("docker", "ps", "--format", "{{.ID}};{{.Image}};{{.Ports}};{{.Status}}").Output()
+	out, err := exec.Command("docker", "ps", "-a", "--format", "{{.ID}};{{.Image}};{{.Ports}};{{.Status}}").Output()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
