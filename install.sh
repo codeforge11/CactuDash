@@ -68,18 +68,22 @@ add_user_to_docker_group() {
     sudo usermod -aG docker $USER
 }
 
-# Function to install and configure Postgresql
-install_postgresql(){
-    echo "Installing PostgreSQL on Docker..."
+# Function to install and configure MariaDB
+install_mariadb(){
+    echo "Installing MariaDB on Docker..."
+
     root_password="CactuDash"
 
-    docker run -d --name CactuDash_postgres --restart unless-stopped -e POSTGRES_PASSWORD=$root_password -p 3031:5432 postgres:latest
+    docker run -d --name CactuDash_server --restart unless-stopped -e MYSQL_ROOT_PASSWORD=$root_password -p 3031:3306 mariadb:latest
+    
+    sleep 60
 
-    sleep 120
-
-    docker exec -i CactuDash_postgres psql -U postgres -d postgres -c "CREATE TABLE userlogin (id SERIAL PRIMARY KEY, username TEXT NOT NULL, password CHAR(125) NOT NULL);"
-    docker exec -i CactuDash_postgres psql -U postgres -d postgres -c "INSERT INTO userlogin (username, password) VALUES ('admin', '$2a$10$eUY8TH.NXKdR2cWYyYLFZu1IyiijSKaDTEXr6HELPod01sjz3EJU.');"
+    docker exec -it CactuDash_server mysql -uroot -p"$root_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'CactuDash';"
+    docker exec -it CactuDash_server mysql -uroot -p"CactuDash" -e "CREATE DATABASE CactuDB;"
+    docker exec -it CactuDash_server mysql -uroot -p"CactuDash" -e "USE CactuDB; CREATE TABLE userlogin (id SERIAL PRIMARY KEY, username TEXT NOT NULL, password CHAR(125) NOT NULL);"
+    docker exec -it CactuDash_server mysql -uroot -p"CactuDash" -e "USE CactuDB; INSERT INTO userlogin VALUES (null,'admin', '$2a$10$eUY8TH.NXKdR2cWYyYLFZu1IyiijSKaDTEXr6HELPod01sjz3EJU.')"
 }
+
 
 clear_after_installation() {
     echo "Cleaning up installation files..."
@@ -135,7 +139,7 @@ main() {
     esac
 
     add_user_to_docker_group
-    install_postgresql
+    install_mariadb
     clear_after_installation
     echo "Installation complete. Please reboot or log in again for the changes to take effect."
 }
