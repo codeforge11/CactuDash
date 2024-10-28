@@ -276,7 +276,6 @@ func wsHandler(c *gin.Context) {
 // 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
 // 		logError(err)
 // 		return
-
 // 	}
 // 	c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
 // }
