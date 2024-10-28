@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/codeforge11/CactuDash/static/scripts"
+
 	"bufio"
 	"database/sql"
 	"encoding/gob"
@@ -60,7 +62,9 @@ func connectDB() (*sql.DB, error) {
 	connStr := "root:CactuDash@tcp(127.0.0.1:3031)/CactuDB" // Connect to MariaDB
 	db, err := sql.Open("mysql", connStr)
 	if err != nil {
+		scripts.LogError(err)
 		return nil, err
+
 	}
 	return db, nil
 }
@@ -70,7 +74,7 @@ func checkAuthenticated() gin.HandlerFunc {
 		session, err := store.Get(c.Request, "session-name")
 		if err != nil {
 			log.Println("Error getting session:", err)
-			logError(err)
+			scripts.LogError(err)
 			c.Redirect(http.StatusFound, "/")
 			c.Abort()
 			return
@@ -97,7 +101,7 @@ func checkAuthenticated() gin.HandlerFunc {
 func loginHandler(c *gin.Context) {
 	var creds Credentials
 	if err := c.Bind(&creds); err != nil {
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(400, gin.H{"error": "invalid request"})
 		return
 	}
@@ -105,7 +109,7 @@ func loginHandler(c *gin.Context) {
 	db, err := connectDB()
 	if err != nil {
 		log.Println("Error connecting to database:", err)
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(500, gin.H{"error": "The database has encountered an issue"})
 		return
 	}
@@ -119,7 +123,7 @@ func loginHandler(c *gin.Context) {
 			c.JSON(401, gin.H{"error": "invalid credentials"})
 		} else {
 			log.Println("Error querying database:", err)
-			logError(err)
+			scripts.LogError(err)
 			c.JSON(500, gin.H{"error": "database didn't work"})
 		}
 		return
@@ -133,7 +137,7 @@ func loginHandler(c *gin.Context) {
 	session, err := store.Get(c.Request, "session-name")
 	if err != nil {
 		log.Println("Error creating session:", err)
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(500, gin.H{"error": "session error"})
 		return
 	}
@@ -142,7 +146,7 @@ func loginHandler(c *gin.Context) {
 	session.Values["expires_at"] = time.Now().Add(sessionExpiration)
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		log.Println("Error saving session:", err)
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(500, gin.H{"error": "session save error"})
 		return
 	}
@@ -154,7 +158,7 @@ func systemInfoHandler(c *gin.Context) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Fatal(err)
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get hostname"})
 		return
 	}
@@ -166,7 +170,7 @@ func systemInfoHandler(c *gin.Context) {
 		file, err := os.Open("/etc/os-release") //for detect distro name
 		if err != nil {
 			log.Println("Error opening /etc/os-release:", err)
-			logError(err)
+			scripts.LogError(err)
 		} else {
 			defer file.Close()
 			scanner := bufio.NewScanner(file)
@@ -180,7 +184,7 @@ func systemInfoHandler(c *gin.Context) {
 			}
 			if err := scanner.Err(); err != nil {
 				log.Println("Error reading file:", err)
-				logError(err)
+				scripts.LogError(err)
 			}
 		}
 	}
@@ -196,7 +200,7 @@ func diskUsageHandler(c *gin.Context) {
 	usageStat, err := disk.Usage("/")
 	if err != nil {
 		log.Println("Error getting disk usage:", err)
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get disk usage"})
 		return
 	}
@@ -215,7 +219,7 @@ func cactuDashDataHandler(c *gin.Context) {
 func reboot(c *gin.Context) {
 	session, err := store.Get(c.Request, "session-name")
 	if err != nil {
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
 		return
 	}
@@ -226,7 +230,7 @@ func reboot(c *gin.Context) {
 
 	err = exec.Command("reboot").Run()
 	if err != nil {
-		logError(err)
+		scripts.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
 		return
 	}
@@ -239,7 +243,7 @@ func wsHandler(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println("Failed to set WebSocket upgrade:", err)
-		logError(err)
+		scripts.LogError(err)
 		return
 	}
 	defer conn.Close()
@@ -248,7 +252,7 @@ func wsHandler(c *gin.Context) {
 		usage, err := cpu.Percent(0, false)
 		if err != nil {
 			log.Println("Error getting CPU usage:", err)
-			logError(err)
+			scripts.LogError(err)
 			break
 		}
 
@@ -256,7 +260,7 @@ func wsHandler(c *gin.Context) {
 		err = conn.WriteJSON(gin.H{"cpu_usage": usage[0]})
 		if err != nil {
 			log.Println("Error writing WebSocket message:", err)
-			logError(err)
+			scripts.LogError(err)
 			break
 		}
 
@@ -265,17 +269,17 @@ func wsHandler(c *gin.Context) {
 	}
 }
 
-func update(c *gin.Context) {
-	cmd := exec.Command("/bin/sh", "static/scripts/update.sh")
-	err := cmd.Run()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
-		logError(err)
-		return
+// func update(c *gin.Context) {
+// 	cmd := exec.Command("/bin/sh", "static/scripts/update.sh")
+// 	err := cmd.Run()
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
+// 		logError(err)
+// 		return
 
-	}
-	c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
-}
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
+// }
 
 // Function to get Docker containers
 func getContainers(c *gin.Context) {
@@ -283,7 +287,7 @@ func getContainers(c *gin.Context) {
 	if err != nil {
 		log.Println("Error executing docker command:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error executing docker command"})
-		logError(err)
+		scripts.LogError(err)
 		return
 	}
 
@@ -316,13 +320,13 @@ func start_stopContainer(c *gin.Context) {
 	if running == "true" {
 		if err := exec.Command("docker", "stop", id).Run(); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to stop container"})
-			logError(err)
+			scripts.LogError(err)
 			return
 		}
 	} else {
 		if err := exec.Command("docker", "start", id).Run(); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start container"})
-			logError(err)
+			scripts.LogError(err)
 			return
 		}
 	}
@@ -336,7 +340,7 @@ func main() {
 	err := router.SetTrustedProxies([]string{"127.0.0.1"})
 	if err != nil {
 		log.Fatal("Error setting trusted proxies:", err)
-		logError(err)
+		scripts.LogError(err)
 	}
 
 	router.Static("/static", "./static")
@@ -362,7 +366,7 @@ func main() {
 
 	router.POST("/reboot", reboot) //Reboot function
 
-	router.POST("/update", update) //Update function
+	router.POST("/update", scripts.Update) //Update function
 
 	router.GET("/containers", getContainers)
 
@@ -371,6 +375,6 @@ func main() {
 	err = router.Run(":3030")
 	if err != nil {
 		log.Fatal("Error starting the server:", err)
-		logError(err)
+		scripts.LogError(err)
 	}
 }

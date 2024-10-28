@@ -1,4 +1,4 @@
-package main
+package scripts
 
 import (
 	"log"
@@ -28,6 +28,6 @@ func init() {
 	logger = log.New(errorLog, "ERROR: ", log.Ldate|log.Ltime)
 }
 
-func logError(err error) {
+func LogError(err error) {
 	logger.Printf("|-| %s", err)
 }
