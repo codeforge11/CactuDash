@@ -87,6 +87,7 @@ body {
   width: calc(33.333% - 20px);
   min-width: 200px;
   text-align: center;
+  position: relative; 
 }
 
 .check_for_updates {
@@ -155,7 +156,8 @@ body {
 }
 
 .RebootButton,
-.documentation {
+.documentation,
+.addContainers {
   border-radius: 8px;
   padding: 10px 20px;
   cursor: pointer;
@@ -254,4 +256,49 @@ body {
 
 #dockerTable {
   width: 100%;
+}
+
+.addContainers {
+  position: absolute; 
+  top: 20px;
+  right: 20px;
+  background-color: #00A7E1;
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+  display: inline-block;
+}
+
+.addContainers:hover {
+  background-color: #007BB3;
+}
+
+.addContainers:active {
+  background-color: #005F87;
+}
+
+#addC {
+  text-align: center;
+  background-color: gray;
+  justify-content: center;
+  align-items: center; 
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 75%;
+  height: 75%;
+  z-index: 100; 
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 9px rgba(0, 0, 0, 0.3);
+  margin: 100px auto;
+  border-radius: 25px;
+}
+#addC h1{
+
 }

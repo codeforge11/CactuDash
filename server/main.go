@@ -213,7 +213,7 @@ func diskUsageHandler(c *gin.Context) {
 }
 
 func cactuDashDataHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"version": Version})
+	c.JSON(http.StatusOK, gin.H{"version": scripts.Version})
 }
 
 func reboot(c *gin.Context) {
