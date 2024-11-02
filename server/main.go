@@ -121,6 +121,7 @@ func loginHandler(c *gin.Context) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.JSON(401, gin.H{"error": "invalid credentials"})
+			scripts.LogMessage("invalid credentials")
 		} else {
 			log.Println("Error querying database:", err)
 			scripts.LogError(err)
@@ -131,6 +132,7 @@ func loginHandler(c *gin.Context) {
 
 	if bcrypt.CompareHashAndPassword([]byte(password), []byte(creds.Password)) != nil {
 		c.JSON(401, gin.H{"error": "invalid credentials"})
+		scripts.LogMessage("invalid credentials")
 		return
 	}
 
@@ -152,6 +154,8 @@ func loginHandler(c *gin.Context) {
 	}
 
 	c.Redirect(http.StatusFound, "/welcome")
+
+	scripts.LogMessage("Successful login")
 }
 
 func systemInfoHandler(c *gin.Context) {
@@ -213,7 +217,9 @@ func diskUsageHandler(c *gin.Context) {
 }
 
 func cactuDashDataHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"version": scripts.Version})
+	var ServerVersion string = scripts.Version
+	c.JSON(http.StatusOK, gin.H{"version": ServerVersion})
+	scripts.LogMessage("Server version: " + ServerVersion)
 }
 
 func reboot(c *gin.Context) {
@@ -236,6 +242,7 @@ func reboot(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
+	scripts.LogMessage("Restart servers")
 }
 
 // WebSocket handler
@@ -312,6 +319,7 @@ func start_stopContainer(c *gin.Context) {
 	out, err := exec.Command("docker", "inspect", "--format={{.State.Running}}", id).Output()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		scripts.LogError(err)
 		return
 	}
 
@@ -322,12 +330,15 @@ func start_stopContainer(c *gin.Context) {
 			scripts.LogError(err)
 			return
 		}
+		scripts.LogMessage("Container stopped:" + id)
 	} else {
 		if err := exec.Command("docker", "start", id).Run(); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start container"})
 			scripts.LogError(err)
 			return
 		}
+		scripts.LogMessage("Container started:" + id)
+		// fmt.Println("Container started:", id)
 	}
 	c.Status(http.StatusNoContent)
 }

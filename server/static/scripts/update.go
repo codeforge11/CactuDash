@@ -42,4 +42,5 @@ func Update(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
+	LogMessage("Update script executed")
 }
