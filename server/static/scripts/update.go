@@ -24,7 +24,7 @@ func Update(c *gin.Context) {
 			ubuntu|debian|raspbian)
 				update_ubuntu_debian_raspbian
 				;;
-			fedora|)
+			fedora|rhel)
 				update_fedora_RedHat
 				;;
 			*)
@@ -33,8 +33,7 @@ func Update(c *gin.Context) {
 		esac
 	else
 		echo "ERROR"
-		logError(err)
-
+	fi
 	`).Run()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
