@@ -158,11 +158,11 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             if (data) {
-                const tbody = document.getElementById('dockerTable').getElementsByTagName('tbody')[0];
+                const table = document.getElementById('dockerTable');
                 data.forEach(container => {
                     if (container.Port !== 3031) //ignore 3031 port
                     {
-                        let row = tbody.insertRow();
+                        let row = table.insertRow();
                         
                         row.insertCell(0).innerText = container.Id;
                         row.insertCell(1).innerText = container.Name;

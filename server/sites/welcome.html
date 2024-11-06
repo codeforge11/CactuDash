@@ -15,7 +15,8 @@
     <div class="navbar">
         <div class="navbar-title">CactuDash</div>
         <div class="container-buttons">
-            <button class="documentation"><img src="static/img/info.svg" alt="Documentation" onclick="openDocs()"></button>
+            <button class="documentation"><img src="static/img/info.svg" alt="Documentation"
+                    onclick="openDocs()"></button>
             <button class="RebootButton" role="button" onclick="reboot()">Reboot</button>
         </div>
     </div>
@@ -40,7 +41,7 @@
                     <td>CactuDash version:</td>
                     <td id="CactuDash_version"></td>
                 </tr>
-                
+
             </table>
         </div>
 
@@ -59,31 +60,33 @@
         </div>
 
         <div class="dynamic-card">
-            <img src="static/img/dashboard_images/docker-logo-blue.svg" alt="Docker" width="200" style="margin-bottom: 20px;" />
+            <img src="static/img/dashboard_images/docker-logo-blue.svg" alt="Docker" width="200"
+                style="margin-bottom: 20px;" />
             <button popovertarget="addC" class="addContainers">
                 Add
             </button>
             <div class="table-containers">
-            <table id="dockerTable" border="1">
-                <thead>
-                <tr>
-                    <th>Container ID</th>
-                    <th>Name</th>
-                    <th>Image</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+                <table id="dockerTable">
+                    <tr>
+                        <th>Container ID</th>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </table>
             </div>
         </div>
 
-        <div id="addC"  popover>
-            <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</h1>
+        <div id="addC" popover>
+            <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum</h1>
         </div>
     </div>
-      
+
 </body>
 
 </html>
