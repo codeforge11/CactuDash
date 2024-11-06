@@ -40,8 +40,7 @@ async function SysInfo() {
             document.getElementById('OS_name').innerText = data.nameOfOs;
         }
         else{
-            console.log("Error: Unsupported system")
-            console.log("Please visit: https://github.com/codeforge11/CactuDash/wiki/Prerequisites")
+            console.log("Error: Unsupported system!","\n","Please visit: https://github.com/codeforge11/CactuDash/wiki/Prerequisites")
             document.getElementById('OS_name').innerText = data.nameOfOs;
         }
 
