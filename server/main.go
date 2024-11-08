@@ -50,7 +50,8 @@ func init() {
 	}
 }
 
-var sessionExpiration = 30 * time.Minute // session time
+var sessionExpiration = 10 * time.Minute // session time
+var serverStartTime = time.Now()
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -87,6 +88,14 @@ func checkAuthenticated() gin.HandlerFunc {
 		}
 
 		if session.Values["expires_at"] == nil || time.Now().After(session.Values["expires_at"].(time.Time)) {
+			session.Values["loggedin"] = false
+			session.Save(c.Request, c.Writer)
+			c.Redirect(http.StatusFound, "/")
+			c.Abort()
+			return
+		}
+
+		if session.Values["server_start_time"] == nil || session.Values["server_start_time"].(time.Time).Before(serverStartTime) {
 			session.Values["loggedin"] = false
 			session.Save(c.Request, c.Writer)
 			c.Redirect(http.StatusFound, "/")
@@ -146,6 +155,7 @@ func loginHandler(c *gin.Context) {
 
 	session.Values["loggedin"] = true
 	session.Values["expires_at"] = time.Now().Add(sessionExpiration)
+	session.Values["server_start_time"] = serverStartTime
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		log.Println("Error saving session:", err)
 		scripts.LogError(err)
@@ -244,7 +254,7 @@ func reboot(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
-	scripts.LogMessage("Restart servers")
+	scripts.LogMessage("Restart server...")
 }
 
 // WebSocket handler
@@ -369,6 +379,7 @@ func main() {
 
 	// System info
 	router.GET("/system-info", systemInfoHandler)
+
 	router.GET("/disk-usage", diskUsageHandler) // New route for disk usage
 
 	// WebSocket route
