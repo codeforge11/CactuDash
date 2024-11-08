@@ -2,8 +2,10 @@ package scripts
 
 import (
 	"bufio"
+	"io"
 	"log"
 	"os"
+	"time"
 )
 
 var (
@@ -12,7 +14,7 @@ var (
 	logger_Message *log.Logger
 )
 
-func checkLogFile() {
+func CheckLogFile() {
 	file, err := os.OpenFile("logs/logsfile.txt", os.O_RDWR, 0644)
 	if err != nil {
 		log.Fatalf("Failed to open log file: %s", err)
@@ -25,14 +27,36 @@ func checkLogFile() {
 		lineCount++
 	}
 
-	if lineCount > 525 {
-		err = file.Truncate(0)
-		if err != nil {
-			log.Fatalf("Failed to truncate log file: %s", err)
+	if lineCount >= 500 {
+		if _, err := os.Stat("logs/old_logs"); os.IsNotExist(err) {
+			err = os.Mkdir("logs/old_logs", 0755)
+			if err != nil {
+				log.Fatalf("Failed to create logs/old_logs directory: %s", err)
+			}
 		}
+
+		currentTime := time.Now().Format("2006-01-02_15-04-05")
+		backupFileName := "logs/old_logs/" + currentTime + "_logs.txt"
+
+		backupFile, err := os.Create(backupFileName)
+		if err != nil {
+			log.Fatalf("Failed to create backup log file: %s", err)
+		}
+		defer backupFile.Close()
+
 		_, err = file.Seek(0, 0)
 		if err != nil {
 			log.Fatalf("Failed to seek log file: %s", err)
+		}
+
+		_, err = io.Copy(backupFile, file)
+		if err != nil {
+			log.Fatalf("Failed to copy log file: %s", err)
+		}
+
+		err = file.Truncate(0)
+		if err != nil {
+			log.Fatalf("Failed to truncate log file: %s", err)
 		}
 	}
 }
@@ -56,7 +80,7 @@ func init() {
 
 	logger_Message = log.New(logfile, "", log.Ldate|log.Ltime)
 
-	checkLogFile()
+	CheckLogFile()
 }
 
 func LogError(err error) {

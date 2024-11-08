@@ -155,6 +155,8 @@ func loginHandler(c *gin.Context) {
 
 	c.Redirect(http.StatusFound, "/welcome")
 
+	scripts.CheckLogFile() //Checks the number of rulers
+
 	scripts.LogMessage("Successful login")
 }
 
