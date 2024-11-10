@@ -78,7 +78,15 @@ function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, perce
 
     // Update the disk usage text
     const diskUsageText = document.getElementById('disk-usage');
-    diskUsageText.innerText = `Used: ${usedGB} GB (${usedMB} MB) / Free: ${freeGB} GB (${freeMB} MB) / Total: ${totalGB} GB (${totalMB} MB) [${percentage}%]` ;
+    diskUsageText.innerText = `Total: ${totalGB} GB (${totalMB} MB) [${percentage}%] / Used: ${usedGB} GB (${usedMB} MB) / Free: ${freeGB} GB (${freeMB} MB) `;
+
+   
+    if (parseFloat(freeGB) < 10) {
+        diskUsageText.style.color = 'red';
+        diskUsageText.innerText += ' !!! ';
+    } else {
+        diskUsageText.style.color = 'white';
+    }
 }
 
 async function reboot() {
