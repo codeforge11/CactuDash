@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"database/sql"
 	"encoding/gob"
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -355,6 +356,31 @@ func start_stopContainer(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+func jsLog(c *gin.Context) {
+
+	var jsLogMes struct {
+		Type    string `json:"type"`
+		Message string `json:"message"`
+	}
+
+	if err := c.BindJSON(&jsLogMes); err != nil {
+		scripts.LogError(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	switch jsLogMes.Type {
+	case "LogError":
+		scripts.LogError(errors.New(jsLogMes.Message))
+		c.Status(http.StatusOK)
+	case "LogMessage":
+		scripts.LogMessage(jsLogMes.Message)
+		c.Status(http.StatusOK)
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid log type"})
+	}
+}
+
 func main() {
 	router := gin.Default()
 
@@ -394,6 +420,8 @@ func main() {
 	router.GET("/containers", getContainers)
 
 	router.POST("/toggle/:id", start_stopContainer)
+
+	router.POST("/log", jsLog)
 
 	err = router.Run(":3030")
 	if err != nil {

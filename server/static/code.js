@@ -83,7 +83,8 @@ function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, perce
    
     if (parseFloat(freeGB) < 10) {
         diskUsageText.style.color = 'red';
-        diskUsageText.innerText += ' !!! ';
+        diskUsageText.innerText += 'LOW FREE MEMORY !!! ';
+        console.log("Low free memory lewel")
     } else {
         diskUsageText.style.color = 'white';
     }
@@ -194,5 +195,17 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching containers:', error);
         });
 });
+
+function Log(type, message) {
+    fetch('/log', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: type, message: message })
+    }).catch(error => {
+        console.error('Error sending log:', error);
+    });
+};
 
 SysInfo();
