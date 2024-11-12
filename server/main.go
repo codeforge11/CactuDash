@@ -373,9 +373,11 @@ func jsLog(c *gin.Context) {
 	case "LogError":
 		scripts.LogError(errors.New(jsLogMes.Message))
 		c.Status(http.StatusOK)
+
 	case "LogMessage":
 		scripts.LogMessage(jsLogMes.Message)
 		c.Status(http.StatusOK)
+
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid log type"})
 	}
