@@ -18,10 +18,12 @@ socket.onmessage = function (event) {
 
 socket.onopen = function () {
     console.log('WebSocket connection established');
+    Log("LogMessage","WebSocket connection established")
 };
 
 socket.onclose = function () {
     console.log('WebSocket connection closed');
+    Log("LogMessage","WebSocket connection closed")
 };
 
 socket.onerror = function (error) {

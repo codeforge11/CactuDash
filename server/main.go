@@ -230,9 +230,7 @@ func diskUsageHandler(c *gin.Context) {
 }
 
 func cactuDashDataHandler(c *gin.Context) {
-	var ServerVersion string = scripts.Version
-	c.JSON(http.StatusOK, gin.H{"version": ServerVersion})
-	scripts.LogMessage("Server version: " + ServerVersion)
+	c.JSON(http.StatusOK, gin.H{"version": scripts.Version})
 }
 
 func reboot(c *gin.Context) {
@@ -385,6 +383,8 @@ func jsLog(c *gin.Context) {
 
 func main() {
 	router := gin.Default()
+
+	scripts.LogMessage("Server version: " + scripts.Version)
 
 	// Set trusted proxies
 	err := router.SetTrustedProxies([]string{"127.0.0.1"})
