@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Function to detect processor architecture
 detect_arch() {
     case "$(uname -m)" in
@@ -69,21 +71,60 @@ add_user_to_docker_group() {
 }
 
 # Function to install and configure MariaDB
-install_mariadb(){
+install_mariadb() {
     echo "Installing MariaDB on Docker..."
 
     root_password="CactuDash"
 
-    docker run -d --name CactuDash_server --restart unless-stopped -e MYSQL_ROOT_PASSWORD=$root_password -p 3031:3306 mariadb:latest
-    
-    sleep 60
+    sudo docker run -d \
+        --name CactuDash_server \
+        --restart unless-stopped \
+        -e MYSQL_ROOT_PASSWORD="$root_password" \
+        -p 3031:3306 mariadb:latest
 
-    docker exec -it CactuDash_server mysql -uroot -p"$root_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'CactuDash';"
-    docker exec -it CactuDash_server mysql -uroot -p"CactuDash" -e "CREATE DATABASE CactuDB;"
-    docker exec -it CactuDash_server mysql -uroot -p"CactuDash" -e "USE CactuDB; CREATE TABLE userlogin (id SERIAL PRIMARY KEY, username TEXT NOT NULL, password CHAR(125) NOT NULL);"
-    docker exec -it CactuDash_server mysql -uroot -p"CactuDash" -e "USE CactuDB; INSERT INTO userlogin VALUES (null,'admin', '$2a$10$eUY8TH.NXKdR2cWYyYLFZu1IyiijSKaDTEXr6HELPod01sjz3EJU.')"
+    if [ $? -ne 0 ]; then
+        echo "Failed to start MariaDB container. Check Docker logs."
+        exit 1
+    fi
+
+    echo "Waiting for MariaDB container to initialize..."
+
+    max_attempts=20
+    attempt=1
+    until sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e "SELECT 1" &>/dev/null; do
+        if [ $attempt -gt $max_attempts ]; then
+            echo "MariaDB failed to initialize within the expected time. Exiting."
+            sudo docker logs CactuDash_server
+            exit 1
+        fi
+        echo "Attempt $attempt: Waiting for MariaDB to be ready..."
+        attempt=$((attempt + 1))
+        sleep 7
+    done
+
+    echo "MariaDB is ready. Configuring the database..."
+
+    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
+        "ALTER USER 'root'@'%' IDENTIFIED BY '$root_password';"
+
+    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
+        "CREATE DATABASE IF NOT EXISTS CactuDB;"
+
+    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
+        "USE CactuDB; 
+        CREATE TABLE IF NOT EXISTS userlogin (
+            id SERIAL PRIMARY KEY, 
+            username TEXT NOT NULL, 
+            password CHAR(125) NOT NULL
+        );"
+
+    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
+        "USE CactuDB; 
+        INSERT INTO userlogin (username, password) VALUES 
+        ('admin', '$2a$10$eUY8TH.NXKdR2cWYyYLFZu1IyiijSKaDTEXr6HELPod01sjz3EJU.');"
+
+    echo "MariaDB has been successfully configured."
 }
-
 
 clear_after_installation() {
     echo "Cleaning up installation files..."
@@ -124,7 +165,6 @@ main() {
         * ) echo "Invalid choice. Installation aborted."; exit 1 ;;
     esac
 
-   
     read -sp "Enter root password: " root_password
     echo
 
