@@ -180,10 +180,10 @@ func systemInfoHandler(c *gin.Context) {
 		return
 	}
 
-	nameOfOs := runtime.GOOS
+	nameOfOs := ""
 	arch := runtime.GOARCH
 
-	if nameOfOs == "linux" {
+	if runtime.GOOS == "linux" {
 		file, err := os.Open("/etc/os-release") //for detect distro name
 		if err != nil {
 			log.Println("Error opening /etc/os-release:", err)
@@ -204,6 +204,8 @@ func systemInfoHandler(c *gin.Context) {
 				scripts.LogError(err)
 			}
 		}
+	} else {
+		nameOfOs = runtime.GOOS
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -357,7 +359,7 @@ func start_stopContainer(c *gin.Context) {
 func jsLog(c *gin.Context) {
 
 	var jsLogMes struct {
-		Type    string `json:"type"`
+		Type    bool   `json:"type"`
 		Message string `json:"message"`
 	}
 
@@ -367,17 +369,13 @@ func jsLog(c *gin.Context) {
 		return
 	}
 
-	switch jsLogMes.Type {
-	case "LogError":
-		scripts.LogError(errors.New(jsLogMes.Message))
-		c.Status(http.StatusOK)
-
-	case "LogMessage":
+	if jsLogMes.Type { //Normal logs
 		scripts.LogMessage(jsLogMes.Message)
 		c.Status(http.StatusOK)
 
-	default:
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid log type"})
+	} else { //Errors
+		scripts.LogError(errors.New(jsLogMes.Message))
+		c.Status(http.StatusOK)
 	}
 }
 
