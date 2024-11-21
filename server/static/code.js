@@ -18,12 +18,12 @@ socket.onmessage = function (event) {
 
 socket.onopen = function () {
     console.log('WebSocket connection established');
-    Log(false, "WebSocket connection established")
+    Log(false, "WebSocket connection established");
 };
 
 socket.onclose = function () {
     console.log('WebSocket connection closed');
-    Log(false,"WebSocket connection closed")
+    Log(false,"WebSocket connection closed");
 };
 
 socket.onerror = function (error) {
@@ -38,7 +38,7 @@ async function SysInfo() {
         document.getElementById('arch').innerText = data.arch;
 
         var supportedOS = ["linux","raspbian","ubuntu","debian","fedora"]; //List of supported os
-        console.log(data.nameOfOs)
+        console.log(data.nameOfOs);
         if (supportedOS.includes(data.nameOfOs)){
             
             document.getElementById('OS_name').innerText = data.nameOfOs;

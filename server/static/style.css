@@ -258,7 +258,7 @@ body {
   width: 100%;
 }
 
-.addContainers {
+.addContainers_button {
   position: absolute; 
   top: 20px;
   right: 20px;
@@ -273,15 +273,15 @@ body {
   display: inline-block;
 }
 
-.addContainers:hover {
+.addContainers_button:hover {
   background-color: #007BB3;
 }
 
-.addContainers:active {
+.addContainers_button:active {
   background-color: #005F87;
 }
 
-#addC {
+#addContainer {
   text-align: center;
   background-color: gray;
   justify-content: center;
@@ -299,6 +299,4 @@ body {
   margin: 100px auto;
   border-radius: 25px;
 }
-#addC h1{
 
-}
