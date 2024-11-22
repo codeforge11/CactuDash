@@ -27,7 +27,7 @@ func CheckLogFile() {
 		lineCount++
 	}
 
-	if lineCount >= 500 {
+	if lineCount >= 250 {
 		if _, err := os.Stat("logs/old_logs"); os.IsNotExist(err) {
 			err = os.Mkdir("logs/old_logs", 0755)
 			if err != nil {
