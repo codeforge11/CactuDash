@@ -421,7 +421,7 @@ func main() {
 
 	router.POST("/toggle/:id", start_stopContainer)
 
-	router.POST("/log", jsLog)
+	router.POST("/log", jsLog) //Logs from js file
 
 	err = router.Run(":3030")
 	if err != nil {

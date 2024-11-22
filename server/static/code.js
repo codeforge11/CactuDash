@@ -207,6 +207,8 @@ function Log(type, message) {
         return;
     }
 
+    //for error log type must be true
+    
     fetch('/log', {
         method: 'POST',
         headers: {
