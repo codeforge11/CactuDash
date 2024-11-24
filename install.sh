@@ -148,14 +148,15 @@ main() {
     ARCH=$(detect_arch)
     OS=$(detect_os)
 
-    echo "     _     "
-    echo "  _ | |    "
-    echo " | || | _  "
-    echo " | || || | "
-    echo " |__   __| "
-    echo "    |_|    "
-    echo "CactuDash created by @codeforge11"
-    echo ""
+    echo "                                                             "
+    echo "   _____              _           _____               _      "
+    echo "  / ____|            | |         |  __ \             | |     "
+    echo " | |      __ _   ___ | |_  _   _ | |  | |  __ _  ___ | |__   "
+    echo " | |     / _` | / __|| __|| | | || |  | | / _` |/ __|| '_ \  "
+    echo " | |____| (_| || (__ | |_ | |_| || |__| || (_| |\__ \| | | | "
+    echo "  \_____|\__,_| \___| \__| \__,_||_____/  \__,_||___/|_| |_| "
+    echo " Created by @codeforge11"
+    echo " "
     echo "Detected system: $OS"
     echo "Detected architecture: $ARCH"
     read -p "Do you want to proceed with the installation? (y/n): " choice
