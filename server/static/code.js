@@ -48,10 +48,18 @@ async function SysInfo() {
             document.getElementById('OS_name').innerText = data.nameOfOs;
         }
 
-        const cactuDashResponse = await fetch('/cactu-dash');
-        const cactuDashData = await cactuDashResponse.json();
-        const versionElement = document.getElementById('CactuDash_version');
-        versionElement.innerText = cactuDashData.version;
+        var lastTag = await fetch('/lastTag'); // Take last Tag from github
+        var cactuCurrentVersion = await fetch('/cactu-dash'); // Current version
+        const versionElement = document.getElementById('CactuDash_version'); //Place version on CactuDash_version
+
+        const lastTagData = await lastTag.json();
+        const cactuCurrentVersionData = await cactuCurrentVersion.json();
+
+        if (lastTagData.version && lastTagData.version > cactuCurrentVersionData.version) {
+            versionElement.style.color = 'red';
+            versionElement.title = 'A new version is available';
+        }
+        versionElement.innerText = cactuCurrentVersionData.version;
 
         // Fetch disk usage
         const diskUsageResponse = await fetch('/disk-usage');

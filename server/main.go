@@ -413,6 +413,8 @@ func main() {
 
 	router.GET("/cactu-dash", cactuDashDataHandler)
 
+	router.GET("/lastTag", scripts.GetLastGitTag)
+
 	router.POST("/reboot", reboot) //Reboot function
 
 	router.POST("/update", scripts.Update) //Update function
