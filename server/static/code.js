@@ -39,6 +39,7 @@ async function SysInfo() {
 
         var supportedOS = ["linux","raspbian","ubuntu","debian","fedora"]; //List of supported os
         console.log(data.nameOfOs);
+
         if (supportedOS.includes(data.nameOfOs)){
             
             document.getElementById('OS_name').innerText = data.nameOfOs;
@@ -59,6 +60,7 @@ async function SysInfo() {
             versionElement.style.color = 'red';
             versionElement.title = 'A new version is available';
         }
+        
         versionElement.innerText = cactuCurrentVersionData.version;
 
         // Fetch disk usage
