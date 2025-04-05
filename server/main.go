@@ -4,9 +4,9 @@ import (
 	"github.com/codeforge11/CactuDash/static/scripts"
 
 	"bufio"
-	"database/sql"
 	"encoding/gob"
 	"errors"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -21,8 +21,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Credentials struct {
@@ -60,16 +58,15 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func connectDB() (*sql.DB, error) {
-	connStr := "root:CactuDash@tcp(127.0.0.1:3031)/CactuDB" // Connect to MariaDB
-	db, err := sql.Open("mysql", connStr)
-	if err != nil {
-		scripts.LogError(err)
-		return nil, err
-
-	}
-	return db, nil
-}
+// func connectDB() (*sql.DB, error) {
+// 	connStr := "root:CactuDash@tcp(127.0.0.1:3031)/CactuDB" // Connect to MariaDB
+// 	db, err := sql.Open("mysql", connStr)
+// 	if err != nil {
+// 		scripts.LogError(err)
+// 		return nil, err
+// 	}
+// 	return db, nil
+// }
 
 func checkAuthenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -116,33 +113,14 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	db, err := connectDB()
-	if err != nil {
-		log.Println("Error connecting to database:", err)
-		scripts.LogError(err)
-		c.JSON(500, gin.H{"error": "The database has encountered an issue"})
-		return
-	}
-	defer db.Close()
+	// Log as system user
+	cmd := exec.Command("sudo", "-S", "su", "-c", "exit", creds.Username)
+	cmd.Stdin = strings.NewReader(creds.Password + "\n")
+	err := cmd.Run()
 
-	var username string
-	var password string
-	err = db.QueryRow("SELECT username, password FROM userlogin WHERE username = ?", creds.Username).Scan(&username, &password)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			c.JSON(401, gin.H{"error": "invalid credentials"})
-			scripts.LogMessage("invalid credentials")
-		} else {
-			log.Println("Error querying database:", err)
-			scripts.LogError(err)
-			c.JSON(500, gin.H{"error": "database didn't work"})
-		}
-		return
-	}
-
-	if bcrypt.CompareHashAndPassword([]byte(password), []byte(creds.Password)) != nil {
-		c.JSON(401, gin.H{"error": "invalid credentials"})
 		scripts.LogMessage("invalid credentials")
+		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
 
@@ -166,9 +144,54 @@ func loginHandler(c *gin.Context) {
 
 	c.Redirect(http.StatusFound, "/welcome")
 
-	scripts.CheckLogFile() //Checks the number of rulers
+	scripts.CheckLogFile() // Checks the number of rulers
 
 	scripts.LogMessage("Successful login")
+}
+
+func loginHandler_debug(c *gin.Context) {
+	// running in debug
+
+	var creds Credentials
+	if err := c.Bind(&creds); err != nil {
+		scripts.LogError(err)
+		c.JSON(400, gin.H{"error": "invalid request"})
+		return
+	}
+
+	if creds.Username == "test" && creds.Password == "test" {
+
+		session, err := store.Get(c.Request, "session-name")
+
+		if err != nil {
+			log.Println("Error creating session:", err)
+			scripts.LogError(err)
+			c.JSON(500, gin.H{"error": "session error"})
+			return
+		}
+
+		session.Values["loggedin"] = true
+		session.Values["expires_at"] = time.Now().Add(sessionExpiration)
+		session.Values["server_start_time"] = serverStartTime
+
+		if err := session.Save(c.Request, c.Writer); err != nil {
+			log.Println("Error saving session:", err)
+			scripts.LogError(err)
+			c.JSON(500, gin.H{"error": "session save error"})
+			return
+		}
+
+		c.Redirect(http.StatusFound, "/welcome")
+
+		scripts.CheckLogFile() // Checks the number of rulers
+
+		scripts.LogMessage("Successful login in test mode")
+		return
+	} else {
+		scripts.LogMessage("invalid credentials in test mode")
+		c.JSON(401, gin.H{"error": "invalid credentials"})
+		return
+	}
 }
 
 func systemInfoHandler(c *gin.Context) {
@@ -397,7 +420,14 @@ func main() {
 		c.File("sites/login.html")
 	})
 
-	router.POST("/auth", loginHandler)
+	debugMode := flag.Bool("debug", false, "")
+	flag.Parse()
+
+	if *debugMode {
+		router.POST("/auth", loginHandler_debug)
+	} else {
+		router.POST("/auth", loginHandler)
+	}
 
 	router.GET("/welcome", checkAuthenticated(), func(c *gin.Context) {
 		c.File("sites/welcome.html")
