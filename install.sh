@@ -70,62 +70,6 @@ add_user_to_docker_group() {
     sudo usermod -aG docker $USER
 }
 
-# Function to install and configure MariaDB
-install_mariadb() {
-    echo "Installing MariaDB on Docker..."
-
-    root_password="CactuDash"
-
-    sudo docker run -d \
-        --name CactuDash_server \
-        --restart unless-stopped \
-        -e MYSQL_ROOT_PASSWORD="$root_password" \
-        -p 3031:3306 mariadb:latest
-
-    if [ $? -ne 0 ]; then
-        echo "Failed to start MariaDB container. Check Docker logs."
-        exit 1
-    fi
-
-    echo "Waiting for MariaDB container to initialize..."
-
-    max_attempts=20
-    attempt=1
-    until sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e "SELECT 1" &>/dev/null; do
-        if [ $attempt -gt $max_attempts ]; then
-            echo "MariaDB failed to initialize within the expected time. Exiting."
-            sudo docker logs CactuDash_server
-            exit 1
-        fi
-        echo "Attempt $attempt: Waiting for MariaDB to be ready..."
-        attempt=$((attempt + 1))
-        sleep 7
-    done
-
-    echo "MariaDB is ready. Configuring the database..."
-
-    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
-        "ALTER USER 'root'@'%' IDENTIFIED BY '$root_password';"
-
-    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
-        "CREATE DATABASE IF NOT EXISTS CactuDB;"
-
-    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
-        "USE CactuDB; 
-        CREATE TABLE IF NOT EXISTS userlogin (
-            id SERIAL PRIMARY KEY, 
-            username TEXT NOT NULL, 
-            password CHAR(125) NOT NULL
-        );"
-
-    sudo docker exec CactuDash_server mariadb -uroot -p"$root_password" -e \
-        "USE CactuDB; 
-        INSERT INTO userlogin (username, password) VALUES 
-        ('admin', '$2a$10$eUY8TH.NXKdR2cWYyYLFZu1IyiijSKaDTEXr6HELPod01sjz3EJU.');"
-
-    echo "MariaDB has been successfully configured."
-}
-
 clear_after_installation() {
     echo "Cleaning up installation files..."
 
@@ -181,7 +125,7 @@ main() {
     add_user_to_docker_group
     install_mariadb
     clear_after_installation
-    echo "Installation complete. Please reboot or log in again for the changes to take effect."
+    echo "Installation complete. Please reboot."
 }
 
 main
