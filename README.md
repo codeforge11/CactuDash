@@ -11,6 +11,7 @@ CactuDash is a minimalist and highly optimized dashboard designed for efficient 
 
 | OS              | Status |
 |-----------------|:------:|
+| Arch                |   ✅   |
 | Debian/Ubuntu   |   ✅   |
 | Raspbian        |   ✅   |
 | Red Hat/Fedora  |   ✅   |

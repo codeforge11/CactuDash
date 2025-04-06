@@ -24,6 +24,7 @@ detect_os() {
             ubuntu) echo "ubuntu" ;;
             debian) echo "debian" ;;
             fedora) echo "fedora" ;;
+            arch) echo "arch";;
             *) echo "${ID,,}" ;;
         esac
     else
@@ -61,6 +62,14 @@ install_docker_ubuntu_debian_raspbian() {
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/$(detect_os) $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt update -y
     sudo apt install -y docker-ce docker-ce-cli containerd.io
+    sudo systemctl enable --now docker
+}
+
+# Function to install Docker on Arch 
+install_docker_arch(){
+    echo "Installing Docker on Arch Linux..."
+    sudo pacman -Syu --noconfirm
+    sudo pacman -S --noconfirm docker
     sudo systemctl enable --now docker
 }
 
@@ -119,6 +128,7 @@ main() {
         fedora) install_docker_fedora ;;
         redhat) install_docker_redhat ;;
         ubuntu|debian|raspbian) install_docker_ubuntu_debian_raspbian ;;
+        arch) install_docker_arch ;;
         *) echo "Unsupported operating system: $OS"; exit 1 ;;
     esac
 
