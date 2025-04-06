@@ -5,7 +5,6 @@ import (
 
 	"bufio"
 	"encoding/gob"
-	"errors"
 	"flag"
 	"log"
 	"net/http"
@@ -378,29 +377,6 @@ func start_stopContainer(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func jsLog(c *gin.Context) {
-
-	var jsLogMes struct {
-		Type    bool   `json:"type"`
-		Message string `json:"message"`
-	}
-
-	if err := c.BindJSON(&jsLogMes); err != nil {
-		scripts.LogError(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	if jsLogMes.Type { //Normal logs
-		scripts.LogMessage(jsLogMes.Message)
-		c.Status(http.StatusOK)
-
-	} else { //Errors
-		scripts.LogError(errors.New(jsLogMes.Message))
-		c.Status(http.StatusOK)
-	}
-}
-
 func main() {
 	router := gin.Default()
 
@@ -453,7 +429,7 @@ func main() {
 
 	router.POST("/toggle/:id", start_stopContainer)
 
-	router.POST("/log", jsLog) //Logs from js file
+	router.POST("/log", scripts.JsLog) //Logs from js file
 
 	err = router.Run(":3030")
 	if err != nil {
