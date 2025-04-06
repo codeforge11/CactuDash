@@ -424,6 +424,7 @@ func main() {
 
 	if *debugMode {
 		router.POST("/auth", loginHandler_debug)
+		scripts.LogMessage("Running in debug mode")
 	} else {
 		router.POST("/auth", loginHandler)
 	}
