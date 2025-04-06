@@ -37,8 +37,9 @@ async function SysInfo() {
         document.getElementById('hostname').innerText = data.hostname;
         document.getElementById('arch').innerText = data.arch;
 
-        var supportedOS = ["arch","raspbian","ubuntu","debian","fedora"]; //List of supported os
-        console.log(data.nameOfOs);
+        var supportedOS = data.supportedOSlist;       
+        console.log(data.nameOfOs);                           // List of supported OS
+        // console.log(data.supportedOSlist);
 
         if (supportedOS.includes(data.nameOfOs)){
             

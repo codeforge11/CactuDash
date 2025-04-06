@@ -232,9 +232,10 @@ func systemInfoHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"hostname": hostname,
-		"nameOfOs": nameOfOs,
-		"arch":     arch,
+		"hostname":        hostname,
+		"nameOfOs":        nameOfOs,
+		"arch":            arch,
+		"supportedOSlist": scripts.SupportedOS,
 	})
 }
 
