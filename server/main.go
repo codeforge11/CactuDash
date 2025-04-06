@@ -341,9 +341,7 @@ func getContainers(c *gin.Context) {
 				log.Println("Unexpected format in docker output:", line)
 				continue
 			}
-			if !strings.Contains(fields[2], "3031") { // ignore 3031 port
-				containers = append(containers, Container{Id: fields[0], Image: fields[1], Status: fields[3], Name: fields[4]})
-			}
+			containers = append(containers, Container{Id: fields[0], Image: fields[1], Status: fields[3], Name: fields[4]})
 		}
 	}
 

@@ -182,26 +182,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data) {
                 const table = document.getElementById('dockerTable');
                 data.forEach(container => {
-                    if (container.Port !== 3031) //ignore 3031 port
-                    {
-                        let row = table.insertRow();
-                        
-                        row.insertCell(0).innerText = container.Id;
-                        row.insertCell(1).innerText = container.Name;
-                        row.insertCell(2).innerText = container.Image;
-                        row.insertCell(3).innerText = container.Status;
+                    let row = table.insertRow();
+                    
+                    row.insertCell(0).innerText = container.Id;
+                    row.insertCell(1).innerText = container.Name;
+                    row.insertCell(2).innerText = container.Image;
+                    row.insertCell(3).innerText = container.Status;
 
-                        let actionsCell = row.insertCell(4);
-                        let toggleButton = document.createElement('button');
-                        
-                        toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
-                        toggleButton.onclick = function () {
-                            fetch('/toggle/' + container.Id, { method: 'POST' })
-                                .then(() => location.reload());
-                        };
+                    let actionsCell = row.insertCell(4);
+                    let toggleButton = document.createElement('button');
+                    
+                    toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
+                    toggleButton.onclick = function () {
+                        fetch('/toggle/' + container.Id, { method: 'POST' })
+                            .then(() => location.reload());
+                    };
 
-                        actionsCell.appendChild(toggleButton);
-                    }
+                    actionsCell.appendChild(toggleButton);
                 });
             }
         })
