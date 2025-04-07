@@ -215,8 +215,8 @@ func systemInfoHandler(c *gin.Context) {
 			scanner := bufio.NewScanner(file)
 			for scanner.Scan() {
 				line := scanner.Text()
-				if strings.HasPrefix(line, "NAME=") {
-					nameOfOs = strings.TrimPrefix(line, "NAME=")
+				if strings.HasPrefix(line, "ID=") {
+					nameOfOs = strings.TrimPrefix(line, "ID=")
 					nameOfOs = strings.Trim(nameOfOs, `"`)
 					break
 				}
