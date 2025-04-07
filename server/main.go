@@ -378,6 +378,7 @@ func start_stopContainer(c *gin.Context) {
 }
 
 func main() {
+
 	router := gin.Default()
 
 	scripts.LogMessage("Server version: " + scripts.Version)
@@ -431,7 +432,7 @@ func main() {
 
 	router.POST("/log", scripts.JsLog) //Logs from js file
 
-	err = router.Run(":3030")
+	err = router.Run(":3030") //Start server on port 3030
 	if err != nil {
 		log.Fatal("Error starting the server:", err)
 		scripts.LogError(err)
