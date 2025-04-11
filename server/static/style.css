@@ -215,6 +215,11 @@ body {
   font-weight: bold;
 }
 
+#dockerTable {
+  width: 100%;
+  table-layout: fixed;
+}
+
 .table-containers {
   text-align: center;
   overflow: hidden;
@@ -257,10 +262,6 @@ body {
 .table-containers tr:hover {
   background-color: #464A52;
   box-shadow: 0 6px 6px -6px #0E1119;
-}
-
-#dockerTable {
-  width: 100%;
 }
 
 .addContainers_button {
