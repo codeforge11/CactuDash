@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/codeforge11/CactuDash/static/scripts"
+	"github.com/codeforge11/CactuDash/scripts"
 
 	"bufio"
 	"encoding/gob"
