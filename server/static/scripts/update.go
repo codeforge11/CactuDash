@@ -18,14 +18,21 @@ func Update(c *gin.Context) {
 		sudo dnf update && sudo dnf upgrade --refresh -y
 	}
 
+	update_arch(){
+		sudo pacman -Syu -y
+	}
+
 	if [ -f /etc/os-release ]; then
 		. /etc/os-release
 		case "$ID" in
 			ubuntu|debian|raspbian)
 				update_ubuntu_debian_raspbian
 				;;
-			fedora|rhel)
+			fedora|ultramarine|rhel)
 				update_fedora_RedHat
+				;;
+			arch|manjaro)
+				update_arch
 				;;
 			*)
 				echo "Unsupported distribution $ID"
