@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"net"
+
 	"github.com/codeforge11/CactuDash/scripts"
 
 	"bufio"
@@ -193,6 +196,18 @@ func loginHandler_debug(c *gin.Context) {
 	}
 }
 
+func getIpAddr() net.IP {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Fatal(err)
+		scripts.LogError(err)
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	return localAddr.IP
+}
+
 func systemInfoHandler(c *gin.Context) {
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -379,6 +394,16 @@ func start_stopContainer(c *gin.Context) {
 
 func main() {
 
+	debugMode := flag.Bool("debug", false, "")
+	flag.Parse()
+
+	ip := getIpAddr()
+
+	if !*debugMode {
+		gin.SetMode(gin.ReleaseMode) //run server in release mode
+		fmt.Println("Server starting in: ", ip, ":3030")
+	}
+
 	router := gin.Default()
 
 	scripts.LogMessage("Server version: " + scripts.Version)
@@ -395,9 +420,6 @@ func main() {
 	router.GET("/", func(c *gin.Context) {
 		c.File("sites/login.html")
 	})
-
-	debugMode := flag.Bool("debug", false, "")
-	flag.Parse()
 
 	if *debugMode {
 		router.POST("/auth", loginHandler_debug)
