@@ -401,7 +401,7 @@ func main() {
 
 	if !*debugMode {
 		gin.SetMode(gin.ReleaseMode) //run server in release mode
-		fmt.Println("Server starting in: ", ip, ":3030")
+		fmt.Println("Server starting in: " + (ip.String()) + ":3030")
 	}
 
 	router := gin.Default()
