@@ -60,16 +60,6 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// func connectDB() (*sql.DB, error) {
-// 	connStr := "root:CactuDash@tcp(127.0.0.1:3031)/CactuDB" // Connect to MariaDB
-// 	db, err := sql.Open("mysql", connStr)
-// 	if err != nil {
-// 		scripts.LogError(err)
-// 		return nil, err
-// 	}
-// 	return db, nil
-// }
-
 func checkAuthenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := store.Get(c.Request, "session-name")
@@ -273,26 +263,6 @@ func cactuDashDataHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"version": scripts.Version})
 }
 
-// func reboot(c *gin.Context) {
-// 	session, err := store.Get(c.Request, "session-name")
-// 	if err != nil {
-// 		scripts.LogError(err)
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
-// 		return
-// 	}
-// 	// End the session
-// 	session.Values["loggedin"] = false
-// 	session.Save(c.Request, c.Writer)
-// 	err = exec.Command("reboot").Run()
-// 	if err != nil {
-// 		scripts.LogError(err)
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
-// 	scripts.LogMessage("Restart server...")
-// }
-
 // WebSocket handler
 func wsHandler(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -324,17 +294,6 @@ func wsHandler(c *gin.Context) {
 	}
 }
 
-// func update(c *gin.Context) {
-// 	cmd := exec.Command("/bin/sh", "static/scripts/update.sh")
-// 	err := cmd.Run()
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
-// 		logError(err)
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
-// }
-
 // Function to get Docker containers
 func getContainers(c *gin.Context) {
 	out, err := exec.Command("docker", "ps", "-a", "--format", "{{.ID}};{{.Image}};{{.Ports}};{{.Status}};{{.Names}}").Output()
@@ -360,6 +319,7 @@ func getContainers(c *gin.Context) {
 	c.JSON(http.StatusOK, containers)
 }
 
+// Function to change docker state
 func start_stopContainer(c *gin.Context) {
 	id := strings.TrimPrefix(c.Param("id"), "/toggle/")
 	out, err := exec.Command("docker", "inspect", "--format={{.State.Running}}", id).Output()
