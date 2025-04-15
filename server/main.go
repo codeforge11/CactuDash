@@ -207,7 +207,7 @@ func systemInfoHandler(c *gin.Context) {
 		return
 	}
 
-	nameOfOs := ""
+	osName := ""
 	arch := runtime.GOARCH
 
 	if runtime.GOOS == "linux" {
@@ -221,8 +221,8 @@ func systemInfoHandler(c *gin.Context) {
 			for scanner.Scan() {
 				line := scanner.Text()
 				if strings.HasPrefix(line, "ID=") {
-					nameOfOs = strings.TrimPrefix(line, "ID=")
-					nameOfOs = strings.Trim(nameOfOs, `"`)
+					osName = strings.TrimPrefix(line, "ID=")
+					osName = strings.Trim(osName, `"`)
 					break
 				}
 			}
@@ -232,12 +232,12 @@ func systemInfoHandler(c *gin.Context) {
 			}
 		}
 	} else {
-		nameOfOs = runtime.GOOS
+		osName = runtime.GOOS
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"hostname":        hostname,
-		"nameOfOs":        nameOfOs,
+		"nameOfOs":        osName,
 		"arch":            arch,
 		"supportedOSlist": scripts.SupportedOS,
 	})
