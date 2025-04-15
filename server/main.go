@@ -273,28 +273,25 @@ func cactuDashDataHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"version": scripts.Version})
 }
 
-func reboot(c *gin.Context) {
-	session, err := store.Get(c.Request, "session-name")
-	if err != nil {
-		scripts.LogError(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
-		return
-	}
-
-	// End the session
-	session.Values["loggedin"] = false
-	session.Save(c.Request, c.Writer)
-
-	err = exec.Command("reboot").Run()
-	if err != nil {
-		scripts.LogError(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
-	scripts.LogMessage("Restart server...")
-}
+// func reboot(c *gin.Context) {
+// 	session, err := store.Get(c.Request, "session-name")
+// 	if err != nil {
+// 		scripts.LogError(err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
+// 		return
+// 	}
+// 	// End the session
+// 	session.Values["loggedin"] = false
+// 	session.Save(c.Request, c.Writer)
+// 	err = exec.Command("reboot").Run()
+// 	if err != nil {
+// 		scripts.LogError(err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
+// 	scripts.LogMessage("Restart server...")
+// }
 
 // WebSocket handler
 func wsHandler(c *gin.Context) {
@@ -444,7 +441,7 @@ func main() {
 
 	router.GET("/lastTag", scripts.GetLastGitTag)
 
-	router.POST("/reboot", reboot) //Reboot function
+	router.POST("/reboot", scripts.Reboot) //Reboot function
 
 	router.POST("/update", scripts.Update) //Update function
 
