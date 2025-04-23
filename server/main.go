@@ -401,7 +401,7 @@ func main() {
 
 	router.GET("/lastTag", scripts.GetLastGitTag)
 
-	router.POST("/reboot", scripts.Reboot) //Reboot function
+	router.POST("/power", scripts.Power) //Reboot and shutdown function
 
 	router.POST("/update", scripts.Update) //Update function
 

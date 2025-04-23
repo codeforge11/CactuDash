@@ -107,7 +107,29 @@ function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, perce
 
 async function reboot() {
     try {
-        const response = await fetch('/reboot', { method: "POST" });
+        const response = await fetch('/power', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ option: false })
+        });
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function shutdown() {
+    try {
+        const response = await fetch('/power', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ option: true })
+        });
         const data = await response.json();
         console.log(data);
     } catch (error) {

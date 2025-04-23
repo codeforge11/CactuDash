@@ -15,10 +15,18 @@
     <div class="navbar">
         <div class="navbar-title">CactuDash</div>
         <div class="container-buttons">
-            <button class="documentation"><img src="static/img/info.svg" alt="Documentation"
-                    onclick="openDocs()"></button>
-            <button class="RebootButton" role="button" onclick="reboot()">Reboot</button>
+            <button class="documentation" onclick="openDocs()" title="Open documentation">
+                <img src="static/img/info.svg" alt="Documentation">
+            </button>
+            <button class="openMenuButton" popovertarget="powerMenu" title="Power">
+                    <img src="static/img/powerButton.svg"> 
+            </button>
         </div>
+    </div>
+
+    <div id="powerMenu" popover>
+        <button id="RebootButton" role="button" onclick="reboot()" title="Reboot"> <img src="static/img/rebootButton.svg" ></button>
+        <button id="ShutdownButton" role="button" onclick="shutdown()" title="Shutdown"> <img src="static/img/powerButton.svg" ></button>
     </div>
 
     <div class="container">
