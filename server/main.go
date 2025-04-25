@@ -51,7 +51,7 @@ func init() {
 	}
 }
 
-var sessionExpiration = 10 * time.Minute // session time
+var sessionExpiration = 15 * time.Minute // session time
 var serverStartTime = time.Now()
 
 var upgrader = websocket.Upgrader{
