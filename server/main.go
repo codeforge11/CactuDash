@@ -207,39 +207,57 @@ func systemInfoHandler(c *gin.Context) {
 		return
 	}
 
+	var supportStatus bool
+	var detectedID string
+	var detectedIDLike string
 	osName := ""
 	arch := runtime.GOARCH
 
-	if runtime.GOOS == "linux" {
-		file, err := os.Open("/etc/os-release") //for detect distro name
-		if err != nil {
-			log.Println("Error opening /etc/os-release:", err)
-			scripts.LogError(err)
-		} else {
-			defer file.Close()
-			scanner := bufio.NewScanner(file)
-			for scanner.Scan() {
-				line := scanner.Text()
-				if strings.HasPrefix(line, "ID=") {
-					osName = strings.TrimPrefix(line, "ID=")
-					osName = strings.Trim(osName, `"`)
-					break
-				}
+	file, err := os.Open("/etc/os-release") //for detect distro name
+	if err != nil {
+		log.Println("Error opening /etc/os-release:", err)
+		scripts.LogError(err)
+	} else {
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.HasPrefix(line, "ID=") {
+				detectedID = strings.TrimPrefix(line, "ID=")
+				detectedID = strings.Trim(detectedID, `"`)
+
 			}
-			if err := scanner.Err(); err != nil {
-				log.Println("Error reading file:", err)
-				scripts.LogError(err)
+			if strings.HasPrefix(line, "ID_LIKE=") {
+				detectedIDLike = strings.TrimPrefix(line, "ID_LIKE=")
+				detectedIDLike = strings.Trim(detectedIDLike, `"`)
+
 			}
 		}
+		if err := scanner.Err(); err != nil {
+			log.Println("Error reading file:", err)
+			scripts.LogError(err)
+		}
+	}
+
+	if runtime.GOOS == "linux" {
+		osName = detectedID
 	} else {
 		osName = runtime.GOOS
 	}
 
+	if osName == detectedID {
+		supportStatus = true
+	} else if osName == detectedIDLike {
+		supportStatus = true
+	} else {
+		supportStatus = false
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"hostname":        hostname,
-		"nameOfOs":        osName,
-		"arch":            arch,
-		"supportedOSlist": scripts.SupportedOS,
+		"hostname":      hostname,
+		"nameOfOs":      osName,
+		"arch":          arch,
+		"supportStatus": supportStatus,
 	})
 }
 

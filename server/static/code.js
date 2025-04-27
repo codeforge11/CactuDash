@@ -37,12 +37,9 @@ async function SysInfo() {
         document.getElementById('hostname').innerText = data.hostname;
         document.getElementById('arch').innerText = data.arch;
 
-        var supportedOS = data.supportedOSlist;       
-        console.log(data.nameOfOs);                           // List of supported OS
-        // console.log(data.supportedOSlist);
+        var supportStatus = data.supportStatus;       
 
-        if (supportedOS.includes(data.nameOfOs)){
-            
+        if (supportStatus){
             document.getElementById('OS_name').innerText = data.nameOfOs;
         }
         else{
