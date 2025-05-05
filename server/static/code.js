@@ -96,7 +96,7 @@ function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, perce
     if (parseFloat(freeGB) < 10) {
         diskUsageText.style.color = 'red';
         diskUsageText.innerText += 'LOW FREE MEMORY !!! ';
-        console.log("Low free memory lewel")
+        console.log("Low free memory level")
     } else {
         diskUsageText.style.color = 'white';
     }
