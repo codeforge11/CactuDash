@@ -299,16 +299,38 @@ func wsHandler(c *gin.Context) {
 			break
 		}
 
-		// Send the CPU usage to the client
-		err = conn.WriteJSON(gin.H{"cpu_usage": usage[0]})
+		// Containers in WebSocket
+		out, err := exec.Command("docker", "ps", "-a", "--format", "{{.ID}};{{.Image}};{{.Ports}};{{.Status}};{{.Names}}").Output()
+		var containers []Container
+		if err == nil {
+			for _, line := range strings.Split(string(out), "\n") {
+				if line != "" {
+					fields := strings.Split(line, ";")
+					if len(fields) < 5 {
+						continue
+					}
+					containers = append(containers, Container{
+						Id:     fields[0],
+						Image:  fields[1],
+						Status: fields[3],
+						Name:   fields[4],
+					})
+				}
+			}
+		}
+
+		// Send the CPU usage and containers to the client
+		err = conn.WriteJSON(gin.H{
+			"cpu_usage":  usage[0],
+			"containers": containers,
+		})
 		if err != nil {
 			log.Println("Error writing WebSocket message:", err)
 			scripts.LogError(err)
 			break
 		}
 
-		// Wait for 2 seconds before sending the next message
-		time.Sleep(2 * time.Second)
+		time.Sleep(10 * time.Second) //WebSocket refresh time
 	}
 }
 

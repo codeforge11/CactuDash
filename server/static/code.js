@@ -188,44 +188,35 @@ socket.onmessage = function (event) {
     document.getElementById('cpuPercentage').textContent = cpuUsage + '%';
 
     CpuUsage(cpuUsage);
+
+    //Docker containers in WebSocket
+    if (Array.isArray(data.containers)) {
+        const table = document.getElementById('dockerTable');
+
+        //Clear old rows
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
+
+        data.containers.forEach(container => {
+            let row = table.insertRow();
+            row.insertCell(0).innerText = container.Id;
+            row.insertCell(1).innerText = container.Name;
+            row.insertCell(2).innerText = container.Image;
+            row.insertCell(3).innerText = container.Status;
+
+            let actionsCell = row.insertCell(4);
+            let toggleButton = document.createElement('button');
+            toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
+            toggleButton.onclick = function () {
+                fetch('/toggle/' + container.Id, { method: 'POST' })
+                    .then(() => location.reload());
+            };
+            actionsCell.appendChild(toggleButton);
+        });
+    }
 };
 
-document.addEventListener('DOMContentLoaded', function () {
-    fetch('/containers')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                const table = document.getElementById('dockerTable');
-                data.forEach(container => {
-                    let row = table.insertRow();
-                    
-                    row.insertCell(0).innerText = container.Id;
-                    row.insertCell(1).innerText = container.Name;
-                    row.insertCell(2).innerText = container.Image;
-                    row.insertCell(3).innerText = container.Status;
-
-                    let actionsCell = row.insertCell(4);
-                    let toggleButton = document.createElement('button');
-                    
-                    toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
-                    toggleButton.onclick = function () {
-                        fetch('/toggle/' + container.Id, { method: 'POST' })
-                            .then(() => location.reload());
-                    };
-
-                    actionsCell.appendChild(toggleButton);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching containers:', error);
-        });
-});
 
 function Log(type, message) {
 
