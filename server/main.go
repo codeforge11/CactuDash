@@ -7,7 +7,6 @@ import (
 	"github.com/codeforge11/CactuDash/scripts"
 
 	"bufio"
-	"encoding/gob"
 	"flag"
 	"log"
 	"net/http"
@@ -19,7 +18,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
@@ -38,22 +36,6 @@ type Container struct {
 	Name   string `json:"Name"`
 }
 
-var store sessions.Store
-
-func init() {
-	gob.Register(time.Time{})
-	store = sessions.NewCookieStore([]byte("secret-key"))
-	cookieStore := store.(*sessions.CookieStore)
-
-	cookieStore.Options = &sessions.Options{
-		MaxAge:   int(sessionExpiration.Seconds()),
-		HttpOnly: true,
-	}
-}
-
-var sessionExpiration = 15 * time.Minute // session time
-var serverStartTime = time.Now()
-
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -62,7 +44,7 @@ var upgrader = websocket.Upgrader{
 
 func checkAuthenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		session, err := store.Get(c.Request, "session-name")
+		session, err := scripts.Store.Get(c.Request, "session-name")
 		if err != nil {
 			log.Println("Error getting session:", err)
 			scripts.LogError(err)
@@ -85,7 +67,7 @@ func checkAuthenticated() gin.HandlerFunc {
 			return
 		}
 
-		if session.Values["server_start_time"] == nil || session.Values["server_start_time"].(time.Time).Before(serverStartTime) {
+		if session.Values["server_start_time"] == nil || session.Values["server_start_time"].(time.Time).Before(scripts.ServerStartTime) {
 			session.Values["loggedin"] = false
 			session.Save(c.Request, c.Writer)
 			c.Redirect(http.StatusFound, "/")
@@ -116,7 +98,7 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	session, err := store.Get(c.Request, "session-name")
+	session, err := scripts.Store.Get(c.Request, "session-name")
 	if err != nil {
 		log.Println("Error creating session:", err)
 		scripts.LogError(err)
@@ -125,8 +107,8 @@ func loginHandler(c *gin.Context) {
 	}
 
 	session.Values["loggedin"] = true
-	session.Values["expires_at"] = time.Now().Add(sessionExpiration)
-	session.Values["server_start_time"] = serverStartTime
+	session.Values["expires_at"] = time.Now().Add(scripts.SessionExpiration)
+	session.Values["server_start_time"] = scripts.ServerStartTime
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		log.Println("Error saving session:", err)
 		scripts.LogError(err)
@@ -153,7 +135,7 @@ func loginHandler_debug(c *gin.Context) {
 
 	if creds.Username == "test" && creds.Password == "test" {
 
-		session, err := store.Get(c.Request, "session-name")
+		session, err := scripts.Store.Get(c.Request, "session-name")
 
 		if err != nil {
 			log.Println("Error creating session:", err)
@@ -163,8 +145,8 @@ func loginHandler_debug(c *gin.Context) {
 		}
 
 		session.Values["loggedin"] = true
-		session.Values["expires_at"] = time.Now().Add(sessionExpiration)
-		session.Values["server_start_time"] = serverStartTime
+		session.Values["expires_at"] = time.Now().Add(scripts.SessionExpiration)
+		session.Values["server_start_time"] = scripts.ServerStartTime
 
 		if err := session.Save(c.Request, c.Writer); err != nil {
 			log.Println("Error saving session:", err)

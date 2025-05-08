@@ -5,14 +5,11 @@ import (
 	"os/exec"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/sessions"
 )
 
 func Power(c *gin.Context) {
 
-	store := sessions.NewCookieStore([]byte("secret-key"))
-
-	session, err := store.Get(c.Request, "session-name")
+	session, err := GetSession(c)
 	if err != nil {
 		LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
