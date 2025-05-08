@@ -9,7 +9,7 @@
 //     return hours+':'+minutes+':'+seconds;
 // }
 
-const socket = new WebSocket('ws://localhost:3030/ws');
+const socket = new WebSocket(`ws://${window.location.hostname}:3030/ws`);
 
 socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
