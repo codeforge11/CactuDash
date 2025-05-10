@@ -21,7 +21,7 @@ func randomKey(length int) string { //fully random key generator
 	return base64.StdEncoding.EncodeToString(bytes)[:length]
 }
 
-var Store = sessions.NewCookieStore([]byte(randomKey(128)))
+var Store = sessions.NewCookieStore([]byte(randomKey(32)))
 
 var SessionExpiration = 15 * time.Minute // session time
 var ServerStartTime = time.Now()
