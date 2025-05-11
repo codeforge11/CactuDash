@@ -133,7 +133,7 @@ func loginHandler_debug(c *gin.Context) {
 		return
 	}
 
-	if creds.Username == "test" && creds.Password == "test" {
+	if creds.Username == "debug" && creds.Password == "debug" {
 
 		session, err := scripts.Store.Get(c.Request, "session-name")
 
