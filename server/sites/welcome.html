@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="static/style.css">
     <title>CactuDash</title>
     <link rel="icon" href="static/img/logomark.svg">
-    <script src="static/code.js"></script>
+    <script src="static/dashboard.js"></script>
+    <script src="static/docker.js"></script>
 </head>
 
 <body>
-
     <div class="navbar">
         <div class="navbar-title">CactuDash</div>
         <div class="container-buttons">
@@ -49,7 +49,6 @@
                     <td>CactuDash version:</td>
                     <td id="CactuDash_version"></td>
                 </tr>
-
             </table>
         </div>
 
@@ -70,11 +69,8 @@
         </div>
 
         <div class="dynamic-card">
-            <img src="static/img/dashboard_images/docker-logo-blue.svg" alt="Docker" width="200"
-                style="margin-bottom: 20px;" />
-            <button popovertarget="addContainer" class="addContainers_button">
-                Add
-            </button>
+            <img src="static/img/dashboard_images/docker-logo.svg" alt="Docker" width="200" style="margin-bottom: 20px;" />
+            <button popovertarget="addContainer" class="addContainers_button" onclick="addContainerShowElements()">Add</button>
             <div class="table-containers">
                 <table id="dockerTable">
                     <tr>
@@ -89,14 +85,18 @@
         </div>
 
         <div id="addContainer" popover>
-            <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim id est laborum</h1>
-        </div>
+            <div id="addContainerCenter">
+
+                <div id="dockerCreate" title="Create Docker" onclick="createDocker()">
+                    <img src="static/img/dashboard_images/docker-logo.svg" alt="Docker">
+                </div>
+
+                <div id="dockerComposeCreate" title="Create Docker Compose" onclick="createDockerCompose()">
+                    <img src="static/img/dashboard_images/docker-compose-logo.png" alt="Docker Compose">
+                </div>
+
+            </div>
     </div>
 
 </body>
-
 </html>

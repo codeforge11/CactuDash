@@ -1,14 +1,3 @@
-// function toHHMMSS(secNum) {
-//     var hours   = Math.floor(secNum / 3600);
-//     var minutes = Math.floor((secNum - (hours * 3600)) / 60);
-//     var seconds = secNum - (hours * 3600) - (minutes * 60);
-
-//     if (hours   < 10) {hours   = "0"+hours;}
-//     if (minutes < 10) {minutes = "0"+minutes;}
-//     if (seconds < 10) {seconds = "0"+seconds;}
-//     return hours+':'+minutes+':'+seconds;
-// }
-
 const socket = new WebSocket(`ws://${window.location.hostname}:3030/ws`);
 
 socket.onmessage = function (event) {
@@ -65,13 +54,17 @@ async function SysInfo() {
         const diskUsageResponse = await fetch('/disk-usage');
         const diskUsageData = await diskUsageResponse.json();
 
-        const usedDiskMB = (diskUsageData.used / (1024 * 1024)).toFixed(2); // Convert to MB
-        const totalDiskMB = (diskUsageData.total / (1024 * 1024)).toFixed(2); // Convert to MB
-        const freeDiskMB = (diskUsageData.free / (1024 * 1024)).toFixed(2); // Convert to MB
-        
-        const usedDiskGB = (diskUsageData.used / (1024 * 1024 * 1024)).toFixed(2); // Convert to GB
-        const totalDiskGB = (diskUsageData.total / (1024 * 1024 * 1024)).toFixed(2); // Convert to GB
-        const freeDiskGB = (diskUsageData.free / (1024 * 1024 * 1024)).toFixed(2); // Convert to GB
+        // Convert bytes to MB and GB with a helper function
+        function toMB(bytes) { return (bytes / 1048576).toFixed(2); }
+        function toGB(bytes) { return (bytes / 1073741824).toFixed(2); }
+
+        const usedDiskMB = toMB(diskUsageData.used);
+        const totalDiskMB = toMB(diskUsageData.total);
+        const freeDiskMB = toMB(diskUsageData.free);
+
+        const usedDiskGB = toGB(diskUsageData.used);
+        const totalDiskGB = toGB(diskUsageData.total);
+        const freeDiskGB = toGB(diskUsageData.free);
 
         // Calculate percentage usage
         const usagePercentage = ((diskUsageData.used / diskUsageData.total) * 100).toFixed(2);
@@ -92,7 +85,6 @@ function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, perce
     const diskUsageText = document.getElementById('disk-usage');
     diskUsageText.innerText = `Total: ${totalGB} GB (${totalMB} MB) [${percentage}%] / Used: ${usedGB} GB (${usedMB} MB) / Free: ${freeGB} GB (${freeMB} MB) `;
 
-   
     if (parseFloat(freeGB) < 10) {
         diskUsageText.style.color = 'red';
         diskUsageText.innerText += 'LOW FREE MEMORY !!! ';
@@ -217,16 +209,13 @@ socket.onmessage = function (event) {
     }
 };
 
-
 function Log(type, message) {
 
     if (typeof type !== 'boolean') {
         console.error('Invalid log type:', type);
         return;
     }
-
     //for error log type must be true
-    
     fetch('/log', {
         method: 'POST',
         headers: {

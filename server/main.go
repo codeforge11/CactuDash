@@ -159,10 +159,10 @@ func loginHandler_debug(c *gin.Context) {
 
 		scripts.CheckLogFile() // Checks the number of rulers
 
-		scripts.LogMessage("Successful login in test mode")
+		scripts.LogMessage("Successful login in debug mode")
 		return
 	} else {
-		scripts.LogMessage("invalid credentials in test mode")
+		scripts.LogMessage("invalid credentials in debug mode")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -376,11 +376,9 @@ func main() {
 	debugMode := flag.Bool("debug", false, "")
 	flag.Parse()
 
-	ip := getIpAddr()
-
 	if !*debugMode {
 		gin.SetMode(gin.ReleaseMode) //run server in release mode
-		fmt.Println("Server starting in: " + (ip.String()) + ":3030")
+		fmt.Println("Server starting in: " + (getIpAddr().String()) + ":3030")
 	}
 
 	router := gin.Default()
@@ -433,9 +431,11 @@ func main() {
 
 	router.POST("/log", scripts.JsLog) //Logs from js file
 
+	router.POST("/createDockerType", scripts.CreateDocker) //Create Docker or Docker Compose
+
 	err = router.Run(":3030") //Start server on port 3030
 	if err != nil {
-		log.Fatal("Error starting the server:", err)
+		log.Panic("Error starting the server:", err)
 		scripts.LogError(err)
 	}
 }
