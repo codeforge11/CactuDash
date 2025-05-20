@@ -14,12 +14,11 @@ import (
 
 func Update(c *gin.Context) {
 
-	var detectedID string
-	var detectedIDLike string
+	var detectedID, osName, detectedIDLike string
 	var supportStatus bool
-	var osName string
 
 	file, err := os.Open("/etc/os-release") //for detect distro name
+
 	if err != nil {
 		log.Println("Error opening /etc/os-release:", err)
 		LogError(err)
@@ -66,7 +65,7 @@ func Update(c *gin.Context) {
 
 			err = cmd.Run()
 			if err != nil {
-				log.Fatal("Error running update command:", err)
+				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
 				LogError(err)
 				return
@@ -77,7 +76,7 @@ func Update(c *gin.Context) {
 
 			err = cmd.Run()
 			if err != nil {
-				log.Fatal("Error running update command:", err)
+				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
 				LogError(err)
 				return
@@ -88,7 +87,7 @@ func Update(c *gin.Context) {
 
 			err = cmd.Run()
 			if err != nil {
-				log.Fatal("Error running update command:", err)
+				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
 				LogError(err)
 				return
