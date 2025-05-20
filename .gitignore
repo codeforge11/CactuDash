@@ -4,3 +4,4 @@ server/database
 docs/
 .idea/
 eksport/
+.vscode/
