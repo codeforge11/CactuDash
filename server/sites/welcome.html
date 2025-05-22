@@ -16,17 +16,17 @@
         <div class="navbar-title">CactuDash</div>
         <div class="container-buttons">
             <button class="documentation" onclick="openDocs()" title="Open documentation">
-                <img src="static/img/info.svg" alt="Documentation">
+                <img src="static/img/dashboard/info.svg" alt="Documentation">
             </button>
             <button class="openMenuButton" popovertarget="powerMenu" title="Power">
-                    <img src="static/img/powerButton.svg"> 
+                    <img src="static/img/dashboard/powerButton.svg"> 
             </button>
         </div>
     </div>
 
     <div id="powerMenu" popover>
-        <button id="RebootButton" role="button" onclick="reboot()" title="Reboot"> <img src="static/img/rebootButton.svg" ></button>
-        <button id="ShutdownButton" role="button" onclick="shutdown()" title="Shutdown"> <img src="static/img/powerButton.svg" ></button>
+        <button id="RebootButton" role="button" onclick="reboot()" title="Reboot"> <img src="static/img/dashboard/rebootButton.svg" ></button>
+        <button id="ShutdownButton" role="button" onclick="shutdown()" title="Shutdown"> <img src="static/img/dashboard/powerButton.svg" ></button>
     </div>
 
     <div class="container">
@@ -69,7 +69,7 @@
         </div>
 
         <div class="dynamic-card">
-            <img src="static/img/dashboard_images/docker-logo.svg" alt="Docker" width="200" style="margin-bottom: 20px;" />
+            <img src="static/img/docker/docker-logo.svg" alt="Docker" width="200" style="margin-bottom: 20px;" />
             <button popovertarget="addContainer" class="addContainers_button" onclick="addContainerShowElements()">Add</button>
             <div class="table-containers">
                 <table id="dockerTable">
@@ -88,11 +88,11 @@
             <div id="addContainerCenter">
 
                 <div id="dockerCreate" title="Create Docker" onclick="createDocker()">
-                    <img src="static/img/dashboard_images/docker-logo.svg" alt="Docker">
+                    <img src="static/img/docker/docker-logo.svg" alt="Docker">
                 </div>
 
                 <div id="dockerComposeCreate" title="Create Docker Compose" onclick="createDockerCompose()">
-                    <img src="static/img/dashboard_images/docker-compose-logo.png" alt="Docker Compose">
+                    <img src="static/img/docker/docker-compose-logo.png" alt="Docker Compose">
                 </div>
 
             </div>

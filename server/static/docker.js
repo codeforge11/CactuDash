@@ -4,11 +4,11 @@ function addContainerShowElements() {
 
     addContainerCenter.innerHTML = `
         <div id="dockerCreate" title="Create docker" onclick="createDocker()">
-            <img src="static/img/dashboard_images/docker-logo.svg" alt="docker">
+            <img src="static/img/docker/docker-logo.svg" alt="docker">
         </div>
 
         <div id="dockerComposeCreate" title="Create docker compose" onclick="createDockerCompose()">
-            <img src="static/img/dashboard_images/docker-compose-logo.png" alt="docker compose">
+            <img src="static/img/docker/docker-compose-logo.png" alt="docker compose">
         </div>
     `;
 }

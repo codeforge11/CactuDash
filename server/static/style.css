@@ -7,7 +7,7 @@
 }
 
 body {
-  background: url("/static/img/background.png") no-repeat fixed center/cover;
+  background: url("/static/img/dashboard/background.png") no-repeat fixed center/cover;
   overflow: hidden;
   resize: none;
 }
@@ -93,7 +93,7 @@ body {
 .check_for_updates {
   width: 100px;
   height: 100px;
-  background: url('images/dashboard_images/check_for_updates.svg') no-repeat center/cover;
+  background: url('images/dashboard/check_for_updates.svg') no-repeat center/cover;
   border: none;
   cursor: pointer;
 }
