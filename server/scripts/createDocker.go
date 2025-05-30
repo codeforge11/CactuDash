@@ -2,8 +2,8 @@ package scripts
 
 import (
 	"net/http"
-	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,30 +27,43 @@ func CreateDocker(c *gin.Context) {
 	//True for Docker
 	case true:
 		{
-			LogMessage(Docker.Code)
-
-			dockerfilePath := "Dockerfile.temp"
-			err := os.WriteFile(dockerfilePath, []byte(Docker.Code), 0644)
+			session, err := Store.Get(c.Request, "session-name")
 			if err != nil {
 				LogError(err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Dockerfile"})
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Session error"})
 				return
 			}
 
-			cmd := exec.Command("docker", "build", "-f", dockerfilePath, "-t", Docker.Name, ".")
-			output, err := cmd.CombinedOutput()
-			if err != nil {
-				LogError(err)
-				os.Remove(dockerfilePath)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Docker build failed", "details": string(output)})
+			if loggedIn, ok := session.Values["loggedin"].(bool); ok && loggedIn {
+				if strings.Contains(Docker.Code, "docker run") || strings.Contains(Docker.Code, "sudo docker run") {
+
+					cmd := exec.Command("bash", "-c", Docker.Code)
+					output, err := cmd.CombinedOutput()
+
+					if err != nil {
+						LogError(err)
+						c.JSON(http.StatusInternalServerError, gin.H{
+							"error":   "Failed to execute docker run command",
+							"details": err.Error(),
+							"output":  string(output),
+						})
+						LogMessage("Docker run command failed: " + err.Error())
+						return
+					}
+
+					LogMessage("Docker run command executed successfully")
+
+				} else {
+					LogMessage("error: incorrect docker run command")
+					c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect docker run command"})
+					return
+				}
+
+				c.JSON(http.StatusOK, gin.H{"message": "Docker image built successfully"})
+			} else {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Not authenticated"})
 				return
 			}
-
-			if err := os.Remove(dockerfilePath); err != nil {
-				LogError(err)
-			}
-
-			c.JSON(http.StatusOK, gin.H{"message": "Docker image built successfully", "output": string(output)})
 		}
 
 	//False for Docker Compose
