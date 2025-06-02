@@ -21,7 +21,7 @@ function createDocker() {
         </div>
         <textarea
             class="w-full max-w-4xl bg-[#23283a] rounded-lg shadow-lg px-6 py-4 text-[#e0e0e0] font-mono text-lg outline-none"
-            id="DockerCode" rows="10" placeholder="docker run ..." maxlength="1000"></textarea>
+            id="DockerCode" rows="3" placeholder="docker run ..." maxlength="1000"></textarea>
         <div style="display: flex; gap: 20px;">
             <button onclick="createDockerPush()" style="flex: 1; padding: 16px 0; font-size: 1.1rem; border-radius: 8px; background: #2496ed; color: #fff; border: none; font-weight: bold; cursor: pointer;">Create Docker Image</button>
             <button onclick="addContainerShowElements()" style="flex: 1; padding: 16px 0; font-size: 1.1rem; border-radius: 8px; background: #444950; color: #fff; border: none; font-weight: bold; cursor: pointer;">Cancel</button>
@@ -31,7 +31,7 @@ function createDocker() {
 
     const textarea = document.getElementById('DockerCode');
     textarea.addEventListener('input', function() {
-        const maxRows = 10;
+        const maxRows = 3;
         const lines = textarea.value.split('\n');
         if (lines.length > maxRows) {
             textarea.value = lines.slice(0, maxRows).join('\n');
