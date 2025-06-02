@@ -168,6 +168,7 @@ func loginHandler_debug(c *gin.Context) {
 	}
 }
 
+// Get server device ip
 func getIpAddr() net.IP {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
@@ -243,6 +244,7 @@ func systemInfoHandler(c *gin.Context) {
 	})
 }
 
+// Get disk usage
 func diskUsageHandler(c *gin.Context) {
 	usageStat, err := disk.Usage("/")
 	if err != nil {
@@ -259,6 +261,7 @@ func diskUsageHandler(c *gin.Context) {
 	})
 }
 
+// Get CactuDash version
 func cactuDashDataHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"version": scripts.Version})
 }
