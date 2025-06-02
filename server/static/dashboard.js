@@ -137,6 +137,16 @@ async function update() {
     }
 }
 
+async function clearOldLogs() {
+    try {
+        const response = await fetch('/clearOldLogs', { method: "POST" });
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 function openDocs() {
     window.open("https://github.com/codeforge11/CactuDash/wiki", '_blank').focus(); 
 }

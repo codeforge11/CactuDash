@@ -374,6 +374,15 @@ func start_stopContainer(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+func clearOldLogs(c *gin.Context) {
+	cmd := exec.Command("/bin/sh", "-c", `sudo rm -rf ./logs/old_logs`)
+
+	if err := cmd.Run(); err != nil {
+		log.Println("Error running clear cash script:", err)
+		scripts.LogError(err)
+	}
+}
+
 func main() {
 
 	debugMode := flag.Bool("debug", false, "")
@@ -435,6 +444,8 @@ func main() {
 	router.POST("/log", scripts.JsLog) //Logs from js file
 
 	router.POST("/createDockerType", scripts.CreateDocker) //Create Docker or Docker Compose
+
+	router.POST("/clearOldLogs", clearOldLogs)
 
 	err = router.Run(":3030") //Start server on port 3030
 	if err != nil {
