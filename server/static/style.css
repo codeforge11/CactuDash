@@ -379,4 +379,42 @@ body {
   color: #e0e0e0; 
   border: none; 
   resize: none;
+    font-family: monospace;
+      font-size: 1.1rem;
+}
+
+#codeLineNumbers {
+  user-select: none;
+  text-align: right;
+  background: #23283a;
+  color: #888;
+  font-family: monospace;
+  font-size: 1.1rem;
+  border-radius: 8px 0 0 8px;
+  min-width: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+  row-gap: 0;
+  border-right: 1px solid #333;
+  align-items: flex-end;
+  line-height: 1.5;
+}
+
+.dockerCrButtons {
+flex: 1; 
+padding: 16px 0; 
+font-size: 1.1rem; 
+border-radius: 8px; 
+background: #444950; 
+color: #fff; 
+border: none; 
+font-weight: bold; 
+cursor: pointer;
+}
+
+.dockerCrButtons:hover {
+  filter: brightness(1.1);
+  opacity: 0.95;
 }
