@@ -46,21 +46,16 @@ function createDockerCompose() {
                 <span style="font-size: 2rem; font-weight: bold; color: #fff;">compose.yaml</span>
             </div>
             <div style="display: flex; align-items: stretch; max-height: 400px; overflow: hidden; border-radius: 8px;">
-                
-                 <div id="codeLineNumbers" 
-                    style="background: #23283a; color: #888; padding: 0px 0 8px 8px; border-radius: 8px 0 0 8px; text-align: right; user-select: none; font-family: monospace; font-size: 1.1rem; line-height: 1.5; min-width: 32px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;">
-                </div>
-                
+                 <div id="codeLineNumbers"></div>
                 <textarea class="w-full bg-[#23283a] rounded-lg shadow-lg px-6 py-4 text-[#e0e0e0] font-mono text-lg outline-none"
                     id="DockerCode" rows="16" maxlength="10000"
-                    style="padding-top: 2px; resize: none; border-radius: 0 8px 8px 0; border-left: 1px solid #333; width: 100%; min-width: 400px; min-height: 320px; font-size: 1.1rem; display: block; line-height: 1.5; overflow: auto; overflow-y: auto;">
+                    style="padding-top: 2px; border-radius: 0 8px 8px 0; border-left: 1px solid #333; min-width: 400px; min-height: 320px; display: block; line-height: 1.5; overflow: auto; overflow-y: auto;">
                 </textarea>
-            
-                </div>
-            <div style="display: flex; gap: 20px; margin-top: 16px;">
-                <button onclick="createDockerComposePush()" class="dockerCrButtons" style="background: #2496ed;">Create Docker Container</button>
-                <button onclick="addContainerShowElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
             </div>
+                <div style="display: flex; gap: 20px; margin-top: 16px;">
+                    <button onclick="createDockerComposePush()" class="dockerCrButtons" style="background: #2496ed;">Create Docker Container</button>
+                    <button onclick="addContainerShowElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
+                </div>
         </div>
     `;
 
