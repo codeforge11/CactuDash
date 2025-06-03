@@ -17,6 +17,7 @@ socket.onclose = function () {
 
 socket.onerror = function (error) {
     console.log('WebSocket error:', error);
+    Log(true,error);
 };
 
 async function SysInfo() {
@@ -68,6 +69,7 @@ async function SysInfo() {
         updateDiskUsage(usedDiskMB, totalDiskMB, usedDiskGB, totalDiskGB, freeDiskMB, freeDiskGB, usagePercentage);
     } catch (error) {
         console.error('Error:', error);
+        Log(true,error);
     }
 }
 
@@ -83,7 +85,8 @@ function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, perce
     if (parseFloat(freeGB) < 10) {
         diskUsageText.style.color = 'red';
         diskUsageText.innerText += 'LOW FREE MEMORY !!! ';
-        console.log("Low free memory level")
+        console.log("Low free memory level");
+        Log(true,"Low free memory level");
     } else {
         diskUsageText.style.color = 'white';
     }
@@ -102,6 +105,7 @@ async function reboot() {
         console.log(data);
     } catch (error) {
         console.error('Error:', error);
+        Log(true,error);
     }
 }
 
@@ -118,6 +122,7 @@ async function shutdown() {
         console.log(data);
     } catch (error) {
         console.error('Error:', error);
+        Log(true,error);
     }
 }
 
@@ -129,6 +134,7 @@ async function update() {
         console.log(data);
     } catch (error) {
         console.error('Error:', error);
+        Log(true,error);
     }
 }
 
@@ -231,5 +237,4 @@ function Log(type, message) {
         console.error('Error sending log:', error);
     });
 };
-
 SysInfo();
