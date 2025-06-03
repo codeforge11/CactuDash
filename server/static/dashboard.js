@@ -58,13 +58,8 @@ async function SysInfo() {
         function toMB(bytes) { return (bytes / 1048576).toFixed(2); }
         function toGB(bytes) { return (bytes / 1073741824).toFixed(2); }
 
-        const usedDiskMB = toMB(diskUsageData.used);
-        const totalDiskMB = toMB(diskUsageData.total);
-        const freeDiskMB = toMB(diskUsageData.free);
-
-        const usedDiskGB = toGB(diskUsageData.used);
-        const totalDiskGB = toGB(diskUsageData.total);
-        const freeDiskGB = toGB(diskUsageData.free);
+        const [usedDiskMB, totalDiskMB, freeDiskMB] = ['used', 'total', 'free'].map(key => toMB(diskUsageData[key]));
+        const [usedDiskGB, totalDiskGB, freeDiskGB] = ['used', 'total', 'free'].map(key => toGB(diskUsageData[key]));
 
         // Calculate percentage usage
         const usagePercentage = ((diskUsageData.used / diskUsageData.total) * 100).toFixed(2);
