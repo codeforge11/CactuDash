@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Function to detect processor architecture
 detect_arch() {
     case "$(uname -m)" in
         x86_64) echo "amd64" ;;
@@ -15,7 +14,6 @@ detect_arch() {
     esac
 }
 
-# Function to detect OS
 detect_os() {
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
@@ -24,8 +22,21 @@ detect_os() {
             ubuntu) echo "ubuntu" ;;
             debian) echo "debian" ;;
             fedora) echo "fedora" ;;
-            arch) echo "arch";;
-            *) echo "${ID,,}" ;;
+            arch) echo "arch" ;;
+            *)
+                if [[ -n "$ID_LIKE" ]]; then
+                    case "${ID_LIKE,,}" in
+                        *debian*) echo "debian" ;;
+                        *ubuntu*) echo "ubuntu" ;;
+                        *fedora*) echo "fedora" ;;
+                        *arch*) echo "arch" ;;
+                        *rhel*|*centos*) echo "redhat" ;;
+                        *) echo "${ID,,}" ;;
+                    esac
+                else
+                    echo "${ID,,}"
+                fi
+                ;;
         esac
     else
         echo "Unable to detect the operating system."
@@ -33,7 +44,6 @@ detect_os() {
     fi
 }
 
-# Function to install Docker on Fedora
 install_docker_fedora() {
     echo "Installing Docker on Fedora..."
     sudo dnf update -y
@@ -43,7 +53,6 @@ install_docker_fedora() {
     sudo systemctl enable --now docker
 }
 
-# Function to install Docker on Red Hat
 install_docker_redhat() {
     echo "Installing Docker on Red Hat..."
     sudo yum update -y
@@ -53,7 +62,6 @@ install_docker_redhat() {
     sudo systemctl enable --now docker
 }
 
-# Function to install Docker on Ubuntu/Debian/Raspbian
 install_docker_ubuntu_debian_raspbian() {
     echo "Installing Docker on Ubuntu/Debian/Raspbian..."
     sudo apt update -y
@@ -65,7 +73,6 @@ install_docker_ubuntu_debian_raspbian() {
     sudo systemctl enable --now docker
 }
 
-# Function to install Docker on Arch 
 install_docker_arch(){
     echo "Installing Docker on Arch Linux..."
     sudo pacman -Syu --noconfirm
@@ -73,7 +80,6 @@ install_docker_arch(){
     sudo systemctl enable --now docker
 }
 
-# Function to add user to Docker group
 add_user_to_docker_group() {
     echo "Adding user $USER to the docker group..."
     sudo usermod -aG docker $USER
@@ -95,6 +101,107 @@ clear_after_installation() {
     esac
 
     echo "Cleanup complete!"
+}
+
+install_latest_version() {
+    echo "Installing latest version of CactuDash..."
+
+    if systemctl is-active --quiet CactuDash; then
+        echo "CactuDash service is running. Stopping service..."
+        sudo systemctl stop CactuDash
+
+        INSTALL_DIR="/opt/CactuDash"
+        if [ -d "$INSTALL_DIR" ]; then
+            sudo find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name "logs" -exec rm -rf {} +
+        fi
+    fi
+
+    LATEST_RELEASE=$(curl -s "https://api.github.com/repos/codeforge11/CactuDash/releases/latest")
+    LATEST_VERSION=$(echo "$LATEST_RELEASE" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+
+    if [ -z "$LATEST_VERSION" ]; then
+        echo "Failed to get latest version information."
+        exit 1
+    fi
+
+    ARCH=$(detect_arch)
+    DOWNLOAD_URL="https://github.com/codeforge11/CactuDash/releases/download/$LATEST_VERSION/CactuDash-$LATEST_VERSION-$ARCH.zip"
+    INSTALL_DIR="/opt/CactuDash"
+    
+    sudo mkdir -p "$INSTALL_DIR"
+
+    if ! command -v unzip >/dev/null 2>&1; then
+        OS=$(detect_os)
+        echo "unzip not found, installing..."
+        case "$OS" in
+            ubuntu|debian|raspbian)
+                sudo apt update -y
+                sudo apt install -y unzip
+                ;;
+            fedora)
+                sudo dnf install -y unzip
+                ;;
+            redhat)
+                sudo yum install -y unzip
+                ;;
+            arch)
+                sudo pacman -S --noconfirm unzip
+                ;;
+            *)
+                echo "Please install 'unzip' manually for your OS."
+                exit 1
+                ;;
+        esac
+    fi
+
+    TEMP_FILE=$(mktemp)
+    curl -L "$DOWNLOAD_URL" -o "$TEMP_FILE" || {
+        echo "Failed to download release."
+        exit 1
+    }
+
+    TEMP_EXTRACT_DIR=$(mktemp -d)
+    sudo unzip -o "$TEMP_FILE" -d "$TEMP_EXTRACT_DIR" || {
+        echo "Failed to extract files."
+        exit 1
+    }
+    rm "$TEMP_FILE"
+
+    FIRST_DIR=$(sudo find "$TEMP_EXTRACT_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+    if [ -z "$FIRST_DIR" ]; then
+        echo "Could not find extracted directory."
+        sudo rm -rf "$TEMP_EXTRACT_DIR"
+        exit 1
+    fi
+    sudo mv "$FIRST_DIR"/* "$INSTALL_DIR"/
+    sudo rm -rf "$TEMP_EXTRACT_DIR"
+
+    sudo chmod +x "$INSTALL_DIR/CactuDash"
+    sudo chown -R root:root "$INSTALL_DIR"
+
+    SERVICE_FILE="/etc/systemd/system/CactuDash.service"
+    sudo bash -c "cat > $SERVICE_FILE" <<EOF
+[Unit]
+Description=CactuDash
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=$INSTALL_DIR
+ExecStart=$INSTALL_DIR/CactuDash
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    sudo systemctl daemon-reload
+    sudo systemctl enable CactuDash
+    sudo systemctl start CactuDash
+
+    echo "CactuDash $LATEST_VERSION installed successfully and running as a service."
 }
 
 main() {
@@ -121,7 +228,6 @@ main() {
     read -sp "Enter root password: " root_password
     echo
 
-    # Verify root password
     echo "$root_password" | sudo -S echo "Root password verified." || { echo "Invalid root password. Installation aborted."; exit 1; }
 
     case "$OS" in
@@ -135,6 +241,8 @@ main() {
     add_user_to_docker_group
     install_mariadb
     clear_after_installation
+    install_latest_version
+
     echo "Installation complete. Please reboot."
 }
 
