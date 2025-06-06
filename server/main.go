@@ -87,7 +87,7 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	// Log as system user
+	// Log as system user with root access
 	cmd := exec.Command("sudo", "-S", "su", "-c", "exit", creds.Username)
 	cmd.Stdin = strings.NewReader(creds.Password + "\n")
 	err := cmd.Run()
