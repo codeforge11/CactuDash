@@ -1,6 +1,7 @@
 package scripts
 
 import (
+	"errors"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -47,7 +48,7 @@ func CreateDocker(c *gin.Context) {
 							"details": err.Error(),
 							"output":  string(output),
 						})
-						LogMessage("Docker run command failed: " + err.Error())
+						LogError(errors.New("Docker run command failed: " + err.Error()))
 						return
 					}
 
