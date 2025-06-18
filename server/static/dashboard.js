@@ -71,7 +71,7 @@ async function SysInfo() {
         console.error('Error:', error);
         Log(true,error);
     }
-}
+};
 
 function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, percentage) {
     // Update the progress bar
@@ -90,7 +90,7 @@ function updateDiskUsage(usedMB, totalMB, usedGB, totalGB, freeMB, freeGB, perce
     } else {
         diskUsageText.style.color = 'white';
     }
-}
+};
 
 async function reboot() {
     try {
@@ -107,7 +107,7 @@ async function reboot() {
         console.error('Error:', error);
         Log(true,error);
     }
-}
+};
 
 async function shutdown() {
     try {
@@ -124,7 +124,7 @@ async function shutdown() {
         console.error('Error:', error);
         Log(true,error);
     }
-}
+};
 
 // Update function
 async function update() {
@@ -136,7 +136,7 @@ async function update() {
         console.error('Error:', error);
         Log(true,error);
     }
-}
+};
 
 async function clearOldLogs() {
     try {
@@ -146,11 +146,11 @@ async function clearOldLogs() {
     } catch (error) {
         console.error('Error:', error);
     }
-}
+};
 
 function openDocs() {
     window.open("https://github.com/codeforge11/CactuDash/wiki", '_blank').focus(); 
-}
+};
 
 function CpuUsage(percentage) {
     const canvas = document.getElementById('cpuCanvas');
@@ -182,7 +182,7 @@ function CpuUsage(percentage) {
     context.shadowBlur = 10;
     context.shadowOffsetX = 2;
     context.shadowOffsetY = 2;
-}
+};
 
 socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
