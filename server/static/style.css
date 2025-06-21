@@ -7,9 +7,11 @@
 }
 
 body {
-  background: url("/static/img/dashboard/background.png") no-repeat fixed center/cover;
-  overflow: hidden;
-  resize: none;
+  background: #8A2387;
+  background: linear-gradient(
+    to right,
+    #8A2387,#E94057,#F27121
+  );
 }
 
 .login {
