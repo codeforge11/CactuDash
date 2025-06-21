@@ -105,12 +105,16 @@ async function createDockerPush() {
 
 async function createDockerComposePush() {
     const code = document.getElementById('DockerCode').value;
+    let name = document.getElementById('stackName').value;
+    if (!name) {
+        name = new Date().toISOString().replace(/[:.]/g, '-');
+    }
 
     try {
         const res = await fetch('/createDockerType', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code, type: false })
+            body: JSON.stringify({ code, type: false, name })
         });
         console.log(await res.json());
         addContainerShowElements();
