@@ -142,8 +142,30 @@ body {
 }
 
 .navbar-title {
-  font-size: 28px;
-  font-weight: bold;
+    font-weight: bold;
+  display: flex;
+}
+
+.navbar-title h1{
+  font-size: 30px;
+}
+
+#stackName {
+  background: linear-gradient(90deg, #23283a 0%, #2d334d 100%);
+  color: #e0e0e0;
+  border: 1px solid #444950;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.navbar-title p{
+  font-size: 17px;
+  text-align:end;
+  color: gray;
 }
 
 .container-buttons {
