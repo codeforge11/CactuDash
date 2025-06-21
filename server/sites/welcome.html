@@ -13,7 +13,10 @@
 
 <body>
     <div class="navbar">
-        <div class="navbar-title">CactuDash</div>
+        <div class="navbar-title">
+            <h1>CactuDash </h1>
+            <p id="CactuDash_version" ></p>
+        </div>
         <div class="container-buttons">
             <button class="documentation" onclick="openDocs()" title="Open documentation">
                 <img src="static/img/dashboard/info.svg" alt="Documentation">
@@ -44,10 +47,6 @@
                 <tr>
                     <td>Arch:</td>
                     <td id="arch">Arch</td>
-                </tr>
-                <tr>
-                    <td>CactuDash version:</td>
-                    <td id="CactuDash_version"></td>
                 </tr>
             </table>
         </div>
@@ -94,9 +93,7 @@
                 <div id="dockerComposeCreate" title="Create Docker Compose" onclick="createDockerCompose()">
                     <img src="static/img/docker/docker-compose-logo.png" alt="Docker Compose">
                 </div>
-
             </div>
     </div>
-
 </body>
 </html>
