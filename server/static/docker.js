@@ -1,4 +1,4 @@
-function addContainerShowElements() {
+function showElements() {
 
     const addContainerCenter = document.getElementById("addContainerCenter");
 
@@ -24,7 +24,7 @@ function createDocker() {
             id="DockerCode" rows="3" placeholder="docker run ..." maxlength="1000"></textarea>
         <div style="display: flex; gap: 20px;">
             <button onclick="createDockerPush()" class="dockerCrButtons" style="background: #2496ed;">Create Docker Image</button>
-            <button onclick="addContainerShowElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
+            <button onclick="showElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
         </div>
     </div>
     `;
@@ -58,7 +58,7 @@ function createDockerCompose() {
             </div>
             <div style="display: flex; gap: 20px; margin-top: 16px;">
                 <button type="submit" class="dockerCrButtons" style="background: #2496ed;">Create Docker Container</button>
-                <button type="button" onclick="addContainerShowElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
+                <button type="button" onclick="showElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
             </div>
         </form>
     `;
@@ -101,7 +101,7 @@ async function createDockerPush() {
             body: JSON.stringify({ code, type: true})
         });
         console.log(await res.json());
-        addContainerShowElements();
+        showElements();
     } catch (error) {
         console.error('Error:', error);
     }
@@ -121,9 +121,9 @@ async function createDockerComposePush() {
             body: JSON.stringify({ code, type: false, name })
         });
         console.log(await res.json());
-        addContainerShowElements();
+        showElements();
     } catch (error) {
-        addContainerShowElements()
+        showElements()
         console.error('Error:', error);
     }
 }
