@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 
 	"github.com/codeforge11/CactuDash/scripts"
@@ -86,13 +87,32 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	// Log as system user with root access
-	cmd := exec.Command("sudo", "-S", "su", "-c", "exit", creds.Username)
-	cmd.Stdin = strings.NewReader(creds.Password + "\n")
-	err := cmd.Run()
-
-	if err != nil {
+	if creds.Username == "" || creds.Password == "" {
 		scripts.LogMessage("invalid credentials")
+		c.JSON(401, gin.H{"error": "invalid credentials"})
+		return
+	}
+
+	userInfo, err := exec.Command("getent", "passwd", creds.Username).Output()
+	if err != nil || len(userInfo) == 0 {
+		scripts.LogMessage("invalid user")
+		c.JSON(401, gin.H{"error": "invalid credentials"})
+		return
+	}
+
+	cmd := exec.Command("su", "-", creds.Username, "-c", "exit")
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		scripts.LogError(err)
+		c.JSON(500, gin.H{"error": "internal error"})
+		return
+	}
+	go func() {
+		defer stdin.Close()
+		io.WriteString(stdin, creds.Password+"\n")
+	}()
+	if err := cmd.Run(); err != nil {
+		scripts.LogMessage("invalid password")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
