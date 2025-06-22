@@ -1,0 +1,73 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.24
+
+      - name: Install dependencies
+        working-directory: ./server
+        run: go mod tidy
+
+      - name: Build for Linux amd64
+        run: |
+          echo "Building Linux amd64 binary..."
+          cd server
+          GOOS=linux GOARCH=amd64 go build -o "CactuDash" .
+          cd ..
+          
+          FOLDER="CactuDash-${{ github.ref_name }}-amd64"
+          mkdir -p "$FOLDER"
+          mv server/CactuDash "$FOLDER/"
+          cp LICENSE "$FOLDER/"
+          cp -r server/sites "$FOLDER/"
+          cp -r server/static "$FOLDER/"
+          
+          zip -r "CactuDash-${{ github.ref_name }}-amd64.zip" "$FOLDER"
+
+      - name: Build for Linux arm64
+        run: |
+          echo "Building Linux arm64 binary..."
+          cd server
+          GOOS=linux GOARCH=arm64 go build -o "CactuDash" .
+          cd ..
+          
+          FOLDER="CactuDash-${{ github.ref_name }}-arm64"
+          mkdir -p "$FOLDER"
+          mv server/CactuDash "$FOLDER/"
+          cp LICENSE "$FOLDER/"
+          cp -r server/sites "$FOLDER/"
+          cp -r server/static "$FOLDER/"
+          
+          zip -r "CactuDash-${{ github.ref_name }}-arm64.zip" "$FOLDER"
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body_path: ./CHANGELOG.md
+          files: |
+            CactuDash-${{ github.ref_name }}-amd64.zip
+            CactuDash-${{ github.ref_name }}-arm64.zip
+          draft: false
+          prerelease: false
