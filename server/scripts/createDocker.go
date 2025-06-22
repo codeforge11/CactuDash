@@ -49,7 +49,7 @@ func CreateDocker(c *gin.Context) {
 							"details": err.Error(),
 							"output":  string(output),
 						})
-						LogError(errors.New("Docker run command failed: " + err.Error()))
+						LogError(errors.New("Docker run command failed: " + err.Error() + " | " + string(output)))
 						return
 					}
 
