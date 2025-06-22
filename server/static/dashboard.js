@@ -216,6 +216,15 @@ socket.onmessage = function (event) {
                     .then(() => location.reload());
             };
             actionsCell.appendChild(toggleButton);
+
+            let restartCell = row.insertCell(5);
+            let restartButton = document.createElement('button');
+            restartButton.innerText = 'Restart';
+            restartButton.onclick = function () {
+                fetch('/restart/' + container.Id, { method: 'POST' })
+                    .then(() => location.reload());
+            };
+            restartCell.appendChild(restartButton);
         });
     }
 };

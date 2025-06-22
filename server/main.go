@@ -391,6 +391,19 @@ func start_stopContainer(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// Function to restart docker
+func restartContainer(c *gin.Context) {
+	id := strings.TrimPrefix(c.Param("id"), "/restart/")
+
+	if err := exec.Command("docker", "restart", id).Run(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to restart container"})
+		scripts.LogError(err)
+		return
+	}
+	scripts.LogMessage("Container stopped:" + id)
+
+}
+
 func clearOldLogs(c *gin.Context) {
 	cmd := exec.Command("/bin/sh", "-c", `sudo rm -rf ./logs/old_logs`)
 
@@ -456,6 +469,8 @@ func main() {
 	router.GET("/containers", getContainers)
 
 	router.POST("/toggle/:id", start_stopContainer)
+
+	router.POST("/restart/:id", restartContainer)
 
 	router.POST("/log", scripts.JsLog) //Logs from js file
 
