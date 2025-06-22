@@ -168,7 +168,7 @@ body {
   color: gray;
 }
 
-.container-buttons {
+.containerButtons {
   display: flex;
   gap: 10px;
   justify-content: center;
