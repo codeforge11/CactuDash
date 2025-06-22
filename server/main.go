@@ -247,7 +247,8 @@ func systemInfoHandler(c *gin.Context) {
 		osName = runtime.GOOS
 	}
 
-	if osName == detectedID {
+	switch osName {
+	case detectedID:
 		supportStatus = true
 	} else if osName == detectedIDLike {
 		supportStatus = true
