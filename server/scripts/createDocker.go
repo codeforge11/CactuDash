@@ -3,6 +3,7 @@ package scripts
 import (
 	"errors"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -70,7 +71,43 @@ func CreateDocker(c *gin.Context) {
 	//False for Docker Compose
 	case false:
 		{
-			LogMessage("false")
+			if err := os.MkdirAll(Docker.Name, 0755); err != nil {
+				LogError(err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create directory"})
+				return
+			}
+
+			dockerComposeFilePath := Docker.Name + "/compose.yaml"
+			file, err := os.Create(dockerComposeFilePath)
+			if err != nil {
+				LogMessage("error: Failed to create compose.yaml")
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create compose.yaml"})
+				return
+			}
+			defer file.Close()
+
+			_, err = file.WriteString(Docker.Code)
+			if err != nil {
+				LogError(err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write to compose.yaml"})
+				return
+			}
+
+			cmd := exec.Command("docker-compose", "-f", dockerComposeFilePath, "up", "-d")
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+				LogError(err)
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error":   "Failed to execute docker-compose up",
+					"details": err.Error(),
+					"output":  string(output),
+				})
+				return
+			}
+
+			LogMessage("Docker Compose started successfully")
+			c.JSON(http.StatusOK, gin.H{"message": "Docker Compose started successfully"})
+
 		}
 	default:
 		LogError(nil)
