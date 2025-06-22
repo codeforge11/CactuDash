@@ -404,10 +404,9 @@ func clearOldLogs(c *gin.Context) {
 
 func main() {
 
-	debugMode := flag.Bool("debug", false, "")
 	flag.Parse()
 
-	if !*debugMode {
+	if !*scripts.DebugMode {
 		gin.SetMode(gin.ReleaseMode) //run server in release mode
 		fmt.Println("Server starting in: " + (getIpAddr().String()) + ":3030")
 	}
@@ -429,7 +428,7 @@ func main() {
 		c.File("sites/login.html")
 	})
 
-	if *debugMode {
+	if *scripts.DebugMode {
 		router.POST("/auth", loginHandler_debug)
 		scripts.LogMessage("Running in debug mode")
 	} else {
