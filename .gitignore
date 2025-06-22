@@ -5,3 +5,4 @@ docs/
 .idea/
 eksport/
 .vscode/
+server/workDirectory/

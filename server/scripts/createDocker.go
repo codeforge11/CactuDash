@@ -71,14 +71,16 @@ func CreateDocker(c *gin.Context) {
 	//False for Docker Compose
 	case false:
 		{
-			if err := os.MkdirAll(Docker.Name, 0755); err != nil {
+			dir := "workDirectory/" + Docker.Name
+
+			if err := os.MkdirAll(dir, 0755); err != nil {
 				LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create directory"})
 				return
 			}
 
-			dockerComposeFilePath := Docker.Name + "/compose.yaml"
-			file, err := os.Create(dockerComposeFilePath)
+			composeFilePath := dir + "/compose.yaml"
+			file, err := os.Create(composeFilePath)
 			if err != nil {
 				LogMessage("error: Failed to create compose.yaml")
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create compose.yaml"})
@@ -93,7 +95,8 @@ func CreateDocker(c *gin.Context) {
 				return
 			}
 
-			cmd := exec.Command("docker-compose", "-f", dockerComposeFilePath, "up", "-d")
+			cmd := exec.Command("docker-compose", "-f", composeFilePath, "up", "-d")
+			cmd.Dir = dir
 			output, err := cmd.CombinedOutput()
 			if err != nil {
 				LogError(err)
