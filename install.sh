@@ -95,6 +95,8 @@ clear_after_installation() {
         ubuntu|debian|raspbian)
             sudo apt clean
             ;;
+        arch)
+            sudo pacman -Scc
         *)
             echo "No specific cleanup required for this operating system."
             ;;
