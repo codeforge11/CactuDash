@@ -50,11 +50,12 @@ func Update(c *gin.Context) {
 		osName = runtime.GOOS
 	}
 
-	if osName == detectedID {
+	switch osName {
+	case detectedID:
 		supportStatus = true
-	} else if osName == detectedIDLike {
+	case detectedIDLike:
 		supportStatus = true
-	} else {
+	default:
 		supportStatus = false
 	}
 
