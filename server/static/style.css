@@ -182,7 +182,8 @@ body {
 #ShutdownButton,
 #RebootButton,
 .documentation,
-.openMenuButton,
+#openMenuButton,
+#restartButton,
 .addContainers {
   border-radius: 8px;
   padding: 10px 20px;
@@ -212,20 +213,23 @@ body {
   transform: translateY(0);
 }
 
+#restartButton,
 .documentation,
-.openMenuButton {
+#openMenuButton {
   background-color: #00A7E1;
   color: white;
   font-size: 16px;
 }
 
+#restartButton:hover,
 .documentation:hover,
-.openMenuButton:hover {
+#openMenuButton:hover {
   background-color: #007BB3;
 }
 
+#restartButton:active,
 .documentation:active,
-.openMenuButton:active {
+#openMenuButton:active {
   background-color: #005F87;
 }
 

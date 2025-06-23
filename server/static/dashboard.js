@@ -219,7 +219,13 @@ socket.onmessage = function (event) {
 
             let restartCell = row.insertCell(5);
             let restartButton = document.createElement('button');
-            restartButton.innerText = 'Restart';
+            restartButton.id = 'restartButton';
+            const img = document.createElement('img');
+            img.src = 'static/img/dashboard/rebootButton.svg';
+            img.alt = 'Restart';
+            img.style.width = 'auto';
+            img.style.height = 'auto';
+            restartButton.appendChild(img);
             restartButton.onclick = function () {
                 fetch('/restart/' + container.Id, { method: 'POST' })
                     .then(() => location.reload());
