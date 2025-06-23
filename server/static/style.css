@@ -92,10 +92,10 @@ body {
   position: relative; 
 }
 
-.check_for_updates {
+.checkForUpdates {
   width: 100px;
   height: 100px;
-  background: url('images/dashboard/check_for_updates.svg') no-repeat center/cover;
+  background: url('images/dashboard/checkForUpdates.svg') no-repeat center/cover;
   border: none;
   cursor: pointer;
 }
