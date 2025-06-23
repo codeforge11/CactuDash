@@ -25,21 +25,25 @@ jobs:
         working-directory: ./server
         run: go mod tidy
 
+      - name: Prepare files
+        run: |
+          mkdir -p package/CactuDash
+          cp LICENSE package/CactuDash/
+          cp -r server/sites package/CactuDash/
+          cp -r server/static package/CactuDash/
+
       - name: Build for Linux amd64
         run: |
           echo "Building Linux amd64 binary..."
           cd server
           GOOS=linux GOARCH=amd64 go build -o "CactuDash" .
           cd ..
-          
-          FOLDER="CactuDash-${{ github.ref_name }}-amd64"
-          mkdir -p "$FOLDER"
-          mv server/CactuDash "$FOLDER/"
-          cp LICENSE "$FOLDER/"
-          cp -r server/sites "$FOLDER/"
-          cp -r server/static "$FOLDER/"
-          
-          zip -r "CactuDash-${{ github.ref_name }}-amd64.zip" "$FOLDER"
+          cp server/CactuDash package/CactuDash/
+          cd package
+          zip -r "CactuDash-${{ github.ref_name }}-amd64.zip" CactuDash
+          mv "CactuDash-${{ github.ref_name }}-amd64.zip" ..
+          cd ..
+          rm package/CactuDash/CactuDash
 
       - name: Build for Linux arm64
         run: |
@@ -47,15 +51,11 @@ jobs:
           cd server
           GOOS=linux GOARCH=arm64 go build -o "CactuDash" .
           cd ..
-          
-          FOLDER="CactuDash-${{ github.ref_name }}-arm64"
-          mkdir -p "$FOLDER"
-          mv server/CactuDash "$FOLDER/"
-          cp LICENSE "$FOLDER/"
-          cp -r server/sites "$FOLDER/"
-          cp -r server/static "$FOLDER/"
-          
-          zip -r "CactuDash-${{ github.ref_name }}-arm64.zip" "$FOLDER"
+          cp server/CactuDash package/CactuDash/
+          cd package
+          zip -r "CactuDash-${{ github.ref_name }}-arm64.zip" CactuDash
+          mv "CactuDash-${{ github.ref_name }}-arm64.zip" ..
+          cd ..
 
       - name: Create Release
         id: create_release
