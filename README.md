@@ -25,7 +25,7 @@ CactuDash is a minimalistic and highly optimized dashboard for efficient server 
 To install just use the command below:
 
 ```bash
-wget -O - https://raw.githubusercontent.com/codeforge11/CactuDash/master/install | sudo bash
+wget -O - https://raw.githubusercontent.com/codeforge11/CactuDash/master/install.sh | sudo bash
 ```
 
 Then CactuDash runs at http://[device_IP_address]:3030
