@@ -97,6 +97,7 @@ clear_after_installation() {
             ;;
         arch)
             sudo pacman -Scc
+            ;;
         *)
             echo "No specific cleanup required for this operating system."
             ;;
