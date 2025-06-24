@@ -46,43 +46,49 @@ detect_os() {
 
 install_docker_fedora() {
     echo "Installing Docker on Fedora..."
-    sudo dnf update -y
-    sudo dnf install -y dnf-plugins-core
-    sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-    sudo dnf install -y docker-ce docker-ce-cli containerd.io
-    sudo systemctl enable --now docker
+    dnf update -y
+    dnf install -y dnf-plugins-core
+    dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+    dnf install -y docker-ce docker-ce-cli containerd.io
+    systemctl enable --now docker
 }
 
 install_docker_redhat() {
     echo "Installing Docker on Red Hat..."
-    sudo yum update -y
-    sudo yum install -y yum-utils
-    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    sudo yum install -y docker-ce docker-ce-cli containerd.io
-    sudo systemctl enable --now docker
+    yum update -y
+    yum install -y yum-utils
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum install -y docker-ce docker-ce-cli containerd.io
+    systemctl enable --now docker
 }
 
 install_docker_ubuntu_debian_raspbian() {
     echo "Installing Docker on Ubuntu/Debian/Raspbian..."
-    sudo apt update -y
-    sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-    curl -fsSL https://download.docker.com/linux/$(detect_os)/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/$(detect_os) $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt update -y
-    sudo apt install -y docker-ce docker-ce-cli containerd.io
-    sudo systemctl enable --now docker
+    apt update -y
+    apt install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/$(detect_os)/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/$(detect_os) $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt update -y
+    apt install -y docker-ce docker-ce-cli containerd.io
+    systemctl enable --now docker
 }
 
 install_docker_arch(){
     echo "Installing Docker on Arch Linux..."
-    sudo pacman -Syu --noconfirm
-    sudo pacman -S --noconfirm docker
-    sudo systemctl enable --now docker
+    pacman -Syu --noconfirm
+    pacman -S --noconfirm docker
+    systemctl enable --now docker
 }
 
 add_user_to_docker_group() {
-    echo "Adding user $USER to the docker group..."
-    sudo usermod -aG docker $USER
+    local user
+    if [ -n "$SUDO_USER" ]; then
+        user="$SUDO_USER"
+    else
+        user=$(logname 2>/dev/null || echo "$USER")
+    fi
+    echo "Adding user $user to the docker group..."
+    usermod -aG docker "$user"
 }
 
 clear_after_installation() {
@@ -90,13 +96,13 @@ clear_after_installation() {
 
     case "$(detect_os)" in
         fedora|redhat)
-            sudo dnf clean all
+            dnf clean all
             ;;
         ubuntu|debian|raspbian)
-            sudo apt clean
+            apt clean
             ;;
         arch)
-            sudo pacman -Scc
+            pacman -Scc --noconfirm
             ;;
         *)
             echo "No specific cleanup required for this operating system."
@@ -111,11 +117,11 @@ install_latest_version() {
 
     if systemctl is-active --quiet CactuDash; then
         echo "CactuDash service is running. Stopping service..."
-        sudo systemctl stop CactuDash
+        systemctl stop CactuDash
 
         INSTALL_DIR="/opt/CactuDash"
         if [ -d "$INSTALL_DIR" ]; then
-            sudo find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name "logs" -exec rm -rf {} +
+            find "$INSTALL_DIR" -mindepth 1 -maxdepth 1 ! -name "logs" -exec rm -rf {} +
         fi
     fi
 
@@ -131,24 +137,24 @@ install_latest_version() {
     DOWNLOAD_URL="https://github.com/codeforge11/CactuDash/releases/download/$LATEST_VERSION/CactuDash-$LATEST_VERSION-$ARCH.zip"
     INSTALL_DIR="/opt/CactuDash"
     
-    sudo mkdir -p "$INSTALL_DIR"
+    mkdir -p "$INSTALL_DIR"
 
     if ! command -v unzip >/dev/null 2>&1; then
         OS=$(detect_os)
         echo "unzip not found, installing..."
         case "$OS" in
             ubuntu|debian|raspbian)
-                sudo apt update -y
-                sudo apt install -y unzip
+                apt update -y
+                apt install -y unzip
                 ;;
             fedora)
-                sudo dnf install -y unzip
+                dnf install -y unzip
                 ;;
             redhat)
-                sudo yum install -y unzip
+                yum install -y unzip
                 ;;
             arch)
-                sudo pacman -S --noconfirm unzip
+                pacman -S --noconfirm unzip
                 ;;
             *)
                 echo "Please install 'unzip' manually for your OS."
@@ -164,26 +170,26 @@ install_latest_version() {
     }
 
     TEMP_EXTRACT_DIR=$(mktemp -d)
-    sudo unzip -o "$TEMP_FILE" -d "$TEMP_EXTRACT_DIR" || {
+    unzip -o "$TEMP_FILE" -d "$TEMP_EXTRACT_DIR" || {
         echo "Failed to extract files."
         exit 1
     }
     rm "$TEMP_FILE"
 
-    FIRST_DIR=$(sudo find "$TEMP_EXTRACT_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+    FIRST_DIR=$(find "$TEMP_EXTRACT_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)
     if [ -z "$FIRST_DIR" ]; then
         echo "Could not find extracted directory."
-        sudo rm -rf "$TEMP_EXTRACT_DIR"
+        rm -rf "$TEMP_EXTRACT_DIR"
         exit 1
     fi
-    sudo mv "$FIRST_DIR"/* "$INSTALL_DIR"/
-    sudo rm -rf "$TEMP_EXTRACT_DIR"
+    mv "$FIRST_DIR"/* "$INSTALL_DIR"/
+    rm -rf "$TEMP_EXTRACT_DIR"
 
-    sudo chmod +x "$INSTALL_DIR/CactuDash"
-    sudo chown -R root:root "$INSTALL_DIR"
+    chmod +x "$INSTALL_DIR/CactuDash"
+    chown -R root:root "$INSTALL_DIR"
 
     SERVICE_FILE="/etc/systemd/system/CactuDash.service"
-    sudo bash -c "cat > $SERVICE_FILE" <<EOF
+    cat > "$SERVICE_FILE" <<EOF
 [Unit]
 Description=CactuDash
 After=network.target
@@ -200,14 +206,19 @@ RestartSec=5s
 WantedBy=multi-user.target
 EOF
 
-    sudo systemctl daemon-reload
-    sudo systemctl enable CactuDash
-    sudo systemctl start CactuDash
+    systemctl daemon-reload
+    systemctl enable CactuDash
+    systemctl start CactuDash
 
     echo "CactuDash $LATEST_VERSION installed successfully and running as a service."
 }
 
 main() {
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "This script must be run as root. Please use sudo."
+        exit 1
+    fi
+
     ARCH=$(detect_arch)
     OS=$(detect_os)
 
@@ -221,17 +232,19 @@ main() {
     echo "--------------------------------------------------------------------------"
     echo "Detected system: $OS"
     echo "Detected architecture: $ARCH"
-    read -p "Do you want to proceed with the installation? (y/n): " choice
+
+    if [ -t 0 ]; then
+        read -p "Do you want to proceed with the installation? (y/n): " choice
+    else
+        choice="y"
+        echo "Proceeding with installation automatically (non-interactive mode)."
+    fi
+
     case "$choice" in
         y|Y ) echo "Proceeding with installation..." ;;
         n|N ) echo "Installation aborted."; exit 0 ;;
         * ) echo "Invalid choice. Installation aborted."; exit 1 ;;
     esac
-
-    read -sp "Enter root password: " root_password
-    echo
-
-    echo "$root_password" | sudo -S echo "Root password verified." || { echo "Invalid root password. Installation aborted."; exit 1; }
 
     case "$OS" in
         fedora) install_docker_fedora ;;
@@ -242,7 +255,6 @@ main() {
     esac
 
     add_user_to_docker_group
-    install_mariadb
     clear_after_installation
     install_latest_version
 
