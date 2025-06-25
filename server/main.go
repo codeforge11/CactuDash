@@ -405,7 +405,7 @@ func restartContainer(c *gin.Context) {
 }
 
 func clearOldLogs(c *gin.Context) {
-	cmd := exec.Command("/bin/sh", "-c", `sudo rm -rf ./logs/old_logs`)
+	cmd := exec.Command("/bin/sh", "-c", `rm -rf ./logs/old_logs`)
 
 	if err := cmd.Run(); err != nil {
 		log.Println("Error running clear cash script:", err)
