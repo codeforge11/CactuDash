@@ -464,6 +464,8 @@ func main() {
 
 	router.POST("/power", scripts.Power) //Reboot and shutdown function
 
+	router.POST("/logout", scripts.Logout)
+
 	router.POST("/update", scripts.Update) //Update function
 
 	router.GET("/containers", getContainers)

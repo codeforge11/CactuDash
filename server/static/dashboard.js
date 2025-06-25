@@ -126,6 +126,17 @@ async function shutdown() {
     }
 };
 
+async function logout() {
+    try {
+        const response = await fetch('/logout', {method: 'POST'});
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+        Log(true,error);
+    }
+};
+
 // Update function
 async function update() {
     try {
