@@ -31,8 +31,12 @@ func Power(c *gin.Context) {
 	case false:
 		{
 
+			// Move user to login page
+			c.JSON(http.StatusOK, gin.H{"redirect": "/"})
+
 			// End the session
 			session.Values["loggedin"] = false
+			session.Options.MaxAge = 0 // Remove cookie
 			session.Save(c.Request, c.Writer)
 
 			c.JSON(http.StatusOK, gin.H{"reboot": "rebooting"})
@@ -50,8 +54,12 @@ func Power(c *gin.Context) {
 	case true:
 		{
 
+			// Move user to login page
+			c.JSON(http.StatusOK, gin.H{"redirect": "/"})
+
 			// End the session
 			session.Values["loggedin"] = false
+			session.Options.MaxAge = 0 // Remove cookie
 			session.Save(c.Request, c.Writer)
 
 			c.JSON(http.StatusOK, gin.H{"shutdown": "Shutting down"})
