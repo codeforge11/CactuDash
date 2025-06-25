@@ -212,7 +212,7 @@ func systemInfoHandler(c *gin.Context) {
 	var supportStatus bool
 	var detectedID string
 	var detectedIDLike string
-	osName := ""
+	var osName string
 	arch := runtime.GOARCH
 
 	file, err := os.Open("/etc/os-release")            //for detect distro name
