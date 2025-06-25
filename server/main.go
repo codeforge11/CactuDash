@@ -215,8 +215,8 @@ func systemInfoHandler(c *gin.Context) {
 	osName := ""
 	arch := runtime.GOARCH
 
-	file, err := os.Open("/etc/os-release") //for detect distro name
-	if err != nil {
+	file, err := os.Open("/etc/os-release")            //for detect distro name
+	if (err != nil) && (*scripts.DebugMode == false) { //for not showing in debug mode
 		log.Println("Error opening /etc/os-release:", err)
 		scripts.LogError(err)
 	} else {
