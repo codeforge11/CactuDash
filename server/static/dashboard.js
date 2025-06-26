@@ -5,11 +5,6 @@ socket.onopen = function () {
     Log(false, "WebSocket connection established");
 };
 
-socket.onclose = function () {
-    console.log('WebSocket connection closed');
-    Log(false,"WebSocket connection closed");
-};
-
 socket.onerror = function (error) {
     console.log('WebSocket error:', error);
     Log(true,error);
