@@ -2,6 +2,7 @@
 
 ### Changed
 - Remove sudo from clearOldLogs command.
+- Change logomark.
 
 ### Added
 - Add logout function.
