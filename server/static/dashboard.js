@@ -101,6 +101,7 @@ async function reboot() {
 
 async function shutdown() {
     try {
+        Log(false,"WebSocket connection closing...");
         const response = await fetch('/power', {
             method: 'POST',
             headers: {
@@ -118,6 +119,7 @@ async function shutdown() {
 
 async function logout() {
     try {
+        Log(false,"WebSocket connection closing...");
         const response = await fetch('/logout', {method: 'POST'});
         const data = await response.json();
         console.log(data);
