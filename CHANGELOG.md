@@ -9,3 +9,6 @@
 
 ### Performance
 - Optimize variable.
+
+### Fixed
+- Remove unused WebSocket message handler.
