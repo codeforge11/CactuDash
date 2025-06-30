@@ -400,7 +400,20 @@ func restartContainer(c *gin.Context) {
 		scripts.LogError(err)
 		return
 	}
-	scripts.LogMessage("Container stopped:" + id)
+	scripts.LogMessage("Container restarted:" + id)
+
+}
+
+// Function to remove docker
+func removeContainer(c *gin.Context) {
+	id := strings.TrimPrefix(c.Param("id"), "/remove/")
+
+	if err := exec.Command("docker", "rm", id).Run(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove container"})
+		scripts.LogError(err)
+		return
+	}
+	scripts.LogMessage("Container removed:" + id)
 
 }
 
@@ -473,6 +486,8 @@ func main() {
 	router.POST("/toggle/:id", start_stopContainer)
 
 	router.POST("/restart/:id", restartContainer)
+
+	router.POST("/remove/:id", removeContainer)
 
 	router.POST("/log", scripts.JsLog) //Logs from js file
 
