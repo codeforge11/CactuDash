@@ -34,7 +34,7 @@ async function SysInfo() {
         const lastTagData = await lastTag.json();
         const cactuCurrentVersionData = await cactuCurrentVersion.json();
 
-        if (lastTagData.version && lastTagData.version > cactuCurrentVersionData.version) {
+        if ( lastTagData.last_tag > cactuCurrentVersionData.version) {
             versionElement.style.color = 'red';
             versionElement.title = 'A new version is available';
         }

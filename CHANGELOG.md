@@ -1,7 +1,4 @@
-## [0.1.0b]
-
-### Added
-- Added Remove Docker button.
+## [0.1.0c]
 
 ### Fixed
-- Changed Docker restart log text.
+- Fix detect if there is the latest version.
