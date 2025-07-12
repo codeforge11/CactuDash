@@ -1,4 +1,7 @@
-## [0.1.0c]
+## [0.1.1]
 
 ### Fixed
-- Fix detect if there is the latest version.
+- Fixed detection of the latest version.
+
+### Changed
+- Simplified logout function by removing async/await.

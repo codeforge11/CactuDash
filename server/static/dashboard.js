@@ -117,16 +117,9 @@ async function shutdown() {
     }
 };
 
-async function logout() {
-    try {
-        Log(false,"WebSocket connection closing...");
-        const response = await fetch('/logout', {method: 'POST'});
-        const data = await response.json();
-        console.log(data);
-    } catch (error) {
-        console.error('Error:', error);
-        Log(true,error);
-    }
+function logout() {
+    fetch('/logout', { method: 'POST' })
+        .finally(() => window.location.href = "/");
 };
 
 // Update function
