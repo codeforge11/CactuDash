@@ -18,6 +18,16 @@ func Logout(c *gin.Context) {
 	}
 	session.Values["loggedin"] = false
 	session.Options.MaxAge = -1 // Remove cookie
-	session.Save(c.Request, c.Writer)
+
+	if err := session.Save(c.Request, c.Writer); err != nil {
+		log.Println("Error saving session:", err)
+		LogError(err)
+
+		// Move user into /
+		c.Redirect(http.StatusFound, "/")
+		return
+	}
+
+	// Move user into /
 	c.Redirect(http.StatusFound, "/")
 }
