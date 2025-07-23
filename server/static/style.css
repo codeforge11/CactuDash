@@ -191,14 +191,20 @@ body {
   transition: background-color 0.3s ease;
   border: none;
   display: inline-block;
+  font-size: 16px;
+  width: 100%;
 }
 
 #ShutdownButton,
 #RebootButton {
+  width: 64px;
+  height: 48px;
+  padding: 0;
+  margin-top: 5px;
+  margin-bottom: 5px;
   background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
   box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
   color: #FFFFFF;
-  font-size: 18px;
 }
 
 #ShutdownButton:hover,
@@ -218,7 +224,6 @@ body {
 #openMenuButton {
   background-color: #00A7E1;
   color: white;
-  font-size: 16px;
 }
 
 #restartButton:hover,
@@ -242,12 +247,15 @@ body {
   transition: opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1); 
   pointer-events: none;  
   position: fixed; 
-  top: 75px; 
-  right: 10px; 
-  left: auto;     
+  top: 75px;
+  right: 10px;
+  left: auto;    
   z-index: 400;
-  min-width: 140px; 
-  padding: 10px 16px;
+  min-width: auto;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 #powerMenu:popover-open {
