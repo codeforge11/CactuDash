@@ -28,27 +28,30 @@
     </div>
 
     <div id="powerMenu" popover>
-        <button id="RebootButton" role="button" onclick="reboot()" title="Reboot"> <img src="static/img/dashboard/rebootButton.svg" ></button>
         <button id="ShutdownButton" role="button" onclick="shutdown()" title="Shutdown"> <img src="static/img/dashboard/powerButton.svg" ></button>
+        <button id="RebootButton" role="button" onclick="reboot()" title="Reboot"> <img src="static/img/dashboard/rebootButton.svg" ></button>
     </div>
 
     <div class="container">
         <div class="dynamic-card">
-            <h3>System Information</h3>
-            <table>
-                <tr>
-                    <td>Hostname:</td>
-                    <td id="hostname">Loading...</td>
-                </tr>
-                <tr>
-                    <td>OS:</td>
-                    <td id="OS_name">OS</td>
-                </tr>
-                <tr>
-                    <td>Arch:</td>
-                    <td id="arch">Arch</td>
-                </tr>
-            </table>
+            <h3>System Information:</h3>
+            <div style="display: flex; justify-content: center; align-items: center; padding-top: 5px;">
+                <table>
+                    <tr>
+                        <td>Hostname:</td>
+                        <td id="hostname">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>OS:</td>
+                        <td id="OS_name">OS</td>
+                    </tr>
+                    <tr>
+                        <td>Arch:</td>
+                        <td id="arch">Arch</td>
+                    </tr>
+                    
+                </table>
+            </div>
         </div>
 
         <div class="dynamic-card">
@@ -96,6 +99,8 @@
                     <img src="static/img/docker/docker-compose-logo.png" alt="Docker Compose">
                 </div>
             </div>
+        </div>
+        
     </div>
 </body>
 </html>
