@@ -346,6 +346,11 @@ func main() {
 	if !*scripts.DebugMode {
 		gin.SetMode(gin.ReleaseMode) //run server in release mode
 		fmt.Println("Server starting in: " + (getIpAddr().String()) + ":3030")
+
+		if scripts.CheckReq(nil) == false {
+			panic("CactuDash cannot verify Docker installation. Check logs/logsfile.txt for details.")
+		}
+
 	}
 
 	router := gin.Default()
