@@ -7,7 +7,6 @@ import (
 
 	"github.com/codeforge11/CactuDash/scripts"
 
-	"bufio"
 	"flag"
 	"log"
 	"net/http"
@@ -193,6 +192,7 @@ func getIpAddr() net.IP {
 }
 
 func systemInfoHandler(c *gin.Context) {
+
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Fatal(err)
@@ -201,53 +201,12 @@ func systemInfoHandler(c *gin.Context) {
 		return
 	}
 
-	var supportStatus bool
-	var detectedID string
-	var detectedIDLike string
-	var osName string
+	distro, supportStatus := scripts.RetrieveDistroInfo()
 	arch := runtime.GOARCH
-
-	file, err := os.Open("/etc/os-release")            //for detect distro name
-	if (err != nil) && (*scripts.DebugMode == false) { //for not showing in debug mode
-		log.Println("Error opening /etc/os-release:", err)
-		scripts.LogError(err)
-	} else {
-		defer file.Close()
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			line := scanner.Text()
-			if strings.HasPrefix(line, "ID=") {
-				detectedID = strings.TrimPrefix(line, "ID=")
-				detectedID = strings.Trim(detectedID, `"`)
-
-			}
-			if strings.HasPrefix(line, "ID_LIKE=") {
-				detectedIDLike = strings.TrimPrefix(line, "ID_LIKE=")
-				detectedIDLike = strings.Trim(detectedIDLike, `"`)
-
-			}
-		}
-		if err := scanner.Err(); err != nil {
-			log.Println("Error reading file:", err)
-			scripts.LogError(err)
-		}
-	}
-
-	if runtime.GOOS == "linux" {
-		osName = detectedID
-	} else {
-		osName = runtime.GOOS
-	}
-
-	if osName == detectedID || osName == detectedIDLike {
-		supportStatus = true
-	} else {
-		supportStatus = false
-	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"hostname":      hostname,
-		"nameOfOs":      osName,
+		"nameOfOs":      distro,
 		"arch":          arch,
 		"supportStatus": supportStatus,
 	})

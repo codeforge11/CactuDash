@@ -1,5 +1,8 @@
 ## [0.1.0c]
 
+### Added
+- Added Docker installation verification.
+
 ### Fixed
 - Fixed detection of the latest version.
 
@@ -8,4 +11,5 @@
 - PowerMenu has been set vertically.
 
 ### Performance
-- Minimal changes have been made to improve performance
+- Minimal changes have been made to improve performance.
+- Simplified OS detection and update logic by implementing the function in a separate file.
