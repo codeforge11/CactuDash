@@ -21,7 +21,7 @@ function createDocker() {
         </div>
         <textarea
             class="w-full max-w-4xl bg-[#23283a] rounded-lg shadow-lg px-6 py-4 text-[#e0e0e0] font-mono text-lg outline-none"
-            id="DockerCode" rows="3" placeholder="docker run ..." maxlength="1000"></textarea>
+            id="DockerCode" rows="3" placeholder="docker run ..."></textarea>
         <div style="display: flex; gap: 20px;">
             <button onclick="createDockerPush()" class="dockerCrButtons" style="background: #2496ed;">Create Docker Image</button>
             <button onclick="showElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
