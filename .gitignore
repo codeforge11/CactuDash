@@ -6,3 +6,4 @@ docs/
 eksport/
 .vscode/
 server/workDirectory/
+CactuDB.db
