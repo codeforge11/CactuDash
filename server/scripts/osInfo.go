@@ -3,6 +3,7 @@ package scripts
 import (
 	"bufio"
 	"log"
+	"net"
 	"os"
 	"runtime"
 	"strings"
@@ -56,4 +57,17 @@ func RetrieveDistroInfo() (string, bool) {
 	}
 
 	return osName, supportStatus
+}
+
+// Get server device ip
+func GetIpAddr() net.IP {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Fatal(err)
+		LogError(err)
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+	return localAddr.IP
 }
