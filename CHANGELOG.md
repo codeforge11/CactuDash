@@ -2,6 +2,7 @@
 
 ### Added
 - Added Docker installation verification.
+- Added more collected logs.
 
 ### Fixed
 - Fixed detection of the latest version.

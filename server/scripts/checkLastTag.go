@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -39,6 +40,9 @@ func GetLastGitTagName() (string, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
+		log.Println(err)
+		LogError(err)
+
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -49,12 +53,18 @@ func GetLastGitTagName() (string, error) {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Println(err)
+		LogError(err)
+
 		return "", err
 	}
 
 	var tags []Tag
 	err = json.Unmarshal(body, &tags)
 	if err != nil {
+		log.Println(err)
+		LogError(err)
+
 		return "", err
 	}
 
@@ -75,6 +85,7 @@ func GetLastGitTagName() (string, error) {
 func GetLastGitTag(c *gin.Context) {
 	tag, err := GetLastGitTagName()
 	if err != nil {
+		log.Println(err)
 		LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

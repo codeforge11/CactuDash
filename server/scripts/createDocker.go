@@ -2,6 +2,7 @@ package scripts
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -19,6 +20,8 @@ func CreateDocker(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&Docker); err != nil {
+		log.Println(err)
+
 		LogError(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
@@ -31,6 +34,8 @@ func CreateDocker(c *gin.Context) {
 		{
 			session, err := Store.Get(c.Request, "session-name")
 			if err != nil {
+				log.Println(err)
+
 				LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Session error"})
 				return
@@ -74,6 +79,8 @@ func CreateDocker(c *gin.Context) {
 			dir := "workDirectory/" + Docker.Name
 
 			if err := os.MkdirAll(dir, 0755); err != nil {
+				log.Println(err)
+
 				LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create directory"})
 				return
@@ -82,6 +89,8 @@ func CreateDocker(c *gin.Context) {
 			composeFilePath := dir + "/compose.yaml"
 			file, err := os.Create(composeFilePath)
 			if err != nil {
+				log.Println(err)
+
 				LogMessage("error: Failed to create compose.yaml")
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create compose.yaml"})
 				return
@@ -90,6 +99,8 @@ func CreateDocker(c *gin.Context) {
 
 			_, err = file.WriteString(Docker.Code)
 			if err != nil {
+				log.Println(err)
+
 				LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write to compose.yaml"})
 				return
@@ -99,6 +110,8 @@ func CreateDocker(c *gin.Context) {
 			cmd.Dir = dir
 			output, err := cmd.CombinedOutput()
 			if err != nil {
+				log.Println(err)
+
 				LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error":   "Failed to execute docker-compose up",
@@ -113,7 +126,6 @@ func CreateDocker(c *gin.Context) {
 
 		}
 	default:
-		LogError(nil)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Incorrect docker option"})
 		return
 	}

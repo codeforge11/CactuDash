@@ -2,6 +2,7 @@ package scripts
 
 import (
 	"encoding/gob"
+	"log"
 	"net/http"
 	"time"
 
@@ -34,6 +35,7 @@ func init() {
 func GetSession(c *gin.Context) (*sessions.Session, error) {
 	session, err := Store.Get(c.Request, "session-name")
 	if err != nil {
+		log.Println(err)
 		LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
 		return nil, err
