@@ -27,7 +27,11 @@ func CheckReq(c *gin.Context) bool {
 			case "arch":
 				log.Println("Installing docker for " + distro)
 				LogMessage("Installing docker for " + distro)
-				exec.Command("pacman", "-Sy", "--noconfirm", "docker", "docker-compose").Run()
+				if err := exec.Command("pacman", "-Sy", "--noconfirm", "docker", "docker-compose").Run(); err != nil {
+					LogError(err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to install docker"})
+					return false
+				}
 				exec.Command("systemctl", "start", "docker").Run()
 				exec.Command("systemctl", "enable", "docker").Run()
 				return CheckReq(c)
@@ -35,8 +39,18 @@ func CheckReq(c *gin.Context) bool {
 			case "debian", "ubuntu":
 				log.Println("Installing docker for " + distro)
 				LogMessage("Installing docker for " + distro)
-				exec.Command("apt-get", "update").Run()
-				exec.Command("apt-get", "install", "-y", "docker.io", "docker-compose").Run()
+				if err := exec.Command("apt-get", "update").Run(); err != nil {
+					LogError(err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update apt-get"})
+					return false
+				}
+				if err := exec.Command("apt-get", "install", "-y", "docker.io").Run(); err != nil {
+					LogError(err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to install docker.io"})
+					return false
+				}
+				exec.Command("apt-get", "install", "-y", "docker-compose-plugin").Run()
+				exec.Command("apt-get", "install", "-y", "docker-compose").Run()
 				exec.Command("systemctl", "start", "docker").Run()
 				exec.Command("systemctl", "enable", "docker").Run()
 				return CheckReq(c)
@@ -44,7 +58,11 @@ func CheckReq(c *gin.Context) bool {
 			case "fedora":
 				log.Println("Installing docker for " + distro)
 				LogMessage("Installing docker for " + distro)
-				exec.Command("dnf", "install", "-y", "docker", "docker-compose").Run()
+				if err := exec.Command("dnf", "install", "-y", "docker", "docker-compose").Run(); err != nil {
+					LogError(err)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to install docker"})
+					return false
+				}
 				exec.Command("systemctl", "start", "docker").Run()
 				exec.Command("systemctl", "enable", "docker").Run()
 				return CheckReq(c)
