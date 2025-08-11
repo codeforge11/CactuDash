@@ -1,4 +1,4 @@
-## [0.1.0c]
+## [0.1.1]
 
 ### Added
 - Added Docker installation verification.
