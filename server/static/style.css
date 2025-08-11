@@ -7,11 +7,10 @@
 }
 
 body {
-  background: #8A2387;
-  background: linear-gradient(
-    to right,
-    #8A2387,#E94057,#F27121
-  );
+background: #23074d;
+background: -webkit-linear-gradient(to right, #cc5333, #23074d);
+background: linear-gradient(to right, #cc5333, #23074d);
+
 }
 
 .login {

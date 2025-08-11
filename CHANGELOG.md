@@ -10,6 +10,7 @@
 ### Changed
 - Simplified logout function by removing async/await.
 - PowerMenu has been set vertically.
+- Changed the background to a softer one.
 
 ### Performance
 - Minimal changes have been made to improve performance.
