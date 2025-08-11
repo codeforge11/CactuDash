@@ -3,6 +3,7 @@
 ### Added
 - Added Docker installation verification.
 - Added more collected logs.
+- Added error handling during Docker installation.
 
 ### Fixed
 - Fixed detection of the latest version.
