@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"net"
 
 	"github.com/codeforge11/CactuDash/scripts"
 
@@ -176,19 +175,6 @@ func loginHandler_debug(c *gin.Context) {
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
-}
-
-// Get server device ip
-func getIpAddr() net.IP {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		log.Fatal(err)
-		scripts.LogError(err)
-	}
-	defer conn.Close()
-
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	return localAddr.IP
 }
 
 func systemInfoHandler(c *gin.Context) {
