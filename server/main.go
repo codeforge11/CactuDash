@@ -311,9 +311,23 @@ func main() {
 
 	router.Static("/static", "./static")
 
-	router.GET("/", func(c *gin.Context) {
-		c.File("sites/login.html")
-	})
+	if *scripts.DebugMode == false {
+		if scripts.Checkdb(nil) {
+			router.GET("/", func(c *gin.Context) {
+				c.File("sites/login.html")
+			})
+
+		} else {
+			router.GET("/", func(c *gin.Context) {
+				c.File("sites/register.html")
+			})
+			router.POST("/register", scripts.Register)
+		}
+	} else {
+		router.GET("/", func(c *gin.Context) {
+			c.File("sites/login.html")
+		})
+	}
 
 	if *scripts.DebugMode {
 		router.POST("/auth", loginHandler_debug)
