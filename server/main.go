@@ -328,6 +328,11 @@ func main() {
 
 		go func() {
 			http.ListenAndServe("localhost:6060", nil)
+
+			fmt.Println("Profiling started on localhost:6060")
+			scripts.LogMessage("Profiling started on localhost:6060")
+			log.Println(fmt.Println("Profiling started on localhost:6060"))
+
 		}() //pprof in debug
 
 		router.GET("/", func(c *gin.Context) {
