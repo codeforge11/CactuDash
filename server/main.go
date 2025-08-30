@@ -9,6 +9,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/exec"
 	"runtime"
@@ -292,7 +293,7 @@ func main() {
 		gin.SetMode(gin.ReleaseMode) //run server in release mode
 		fmt.Println("Server starting in: " + (scripts.GetIpAddr().String()) + ":3030")
 
-		if scripts.CheckReq(nil) == false {
+		if !scripts.CheckReq(nil) {
 			panic("CactuDash cannot verify Docker installation. Check logs/logsfile.txt for details.")
 		}
 
@@ -311,7 +312,7 @@ func main() {
 
 	router.Static("/static", "./static")
 
-	if *scripts.DebugMode == false {
+	if !*scripts.DebugMode {
 		if scripts.Checkdb(nil) {
 			router.GET("/", func(c *gin.Context) {
 				c.File("sites/login.html")
@@ -324,6 +325,11 @@ func main() {
 			router.POST("/register", scripts.Register)
 		}
 	} else {
+
+		go func() {
+			http.ListenAndServe("localhost:6060", nil)
+		}() //pprof in debug
+
 		router.GET("/", func(c *gin.Context) {
 			c.File("sites/login.html")
 		})
