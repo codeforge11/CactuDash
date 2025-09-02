@@ -12,6 +12,7 @@
 - Simplified logout function by removing async/await.
 - PowerMenu has been set vertically.
 - Changed the background to a softer one.
+- Implemented user registration and password configuration using SQLite database.
 
 ### Performance
 - Minimal changes have been made to improve performance.
