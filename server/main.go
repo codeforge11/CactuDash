@@ -1,10 +1,11 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
-	"io"
 
 	"github.com/codeforge11/CactuDash/scripts"
+	"golang.org/x/crypto/bcrypt"
 
 	"flag"
 	"log"
@@ -84,25 +85,27 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	userInfo, err := exec.Command("getent", "passwd", creds.Username).Output()
-	if err != nil || len(userInfo) == 0 {
+	// Open SQLite database
+	db, err := sql.Open("sqlite", scripts.Dbfile)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open SQLite database"})
+		scripts.LogError(err)
+		return
+	}
+
+	var realPasswd string // password is hashed
+	row := db.QueryRow("SELECT password FROM users WHERE username = ?", creds.Username)
+
+	err = row.Scan(&realPasswd)
+	if err != nil {
 		scripts.LogMessage("invalid user")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
 
-	cmd := exec.Command("su", "-", creds.Username, "-c", "exit")
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		scripts.LogError(err)
-		c.JSON(500, gin.H{"error": "internal error"})
-		return
-	}
-	go func() {
-		defer stdin.Close()
-		io.WriteString(stdin, creds.Password+"\n")
-	}()
-	if err := cmd.Run(); err != nil {
+	// comparing the hashed password with the given one
+	if err := bcrypt.CompareHashAndPassword([]byte(realPasswd), []byte(creds.Password)); err != nil {
 		scripts.LogMessage("invalid password")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
@@ -333,7 +336,7 @@ func main() {
 			scripts.LogMessage("Profiling started on localhost:6060")
 			log.Println(fmt.Println("Profiling started on localhost:6060"))
 
-		}() //pprof in debug
+		}() // ? pprof in debug
 
 		router.GET("/", func(c *gin.Context) {
 			c.File("sites/login.html")
