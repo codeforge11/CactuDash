@@ -8,7 +8,7 @@
 > The project is in the development phase and may contain bugs. I am constantly working to improve it, but you use it at your own risk. Thank you for your understanding!
 
 # CactuDash
-CactuDash is a minimalistic and highly optimized dashboard for efficient server management, including Docker and Docker Compose.
+**CactuDash**  is a minimalistic and highly optimized dashboard for efficient server management, including Docker and Docker Compose.
 
 ## Supported Operating Systems
 
