@@ -124,6 +124,13 @@ func CreateDocker(c *gin.Context) {
 			LogMessage("Docker Compose started successfully")
 			c.JSON(http.StatusOK, gin.H{"message": "Docker Compose started successfully"})
 
+			err = exec.Command("rm", "-rf", dir).Run()
+			if err != nil {
+				log.Println("Failed to delete compose working folder: " + dir)
+				LogMessage("Failed to delete compose working folder: " + dir)
+				LogError(err)
+			}
+
 		}
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Incorrect docker option"})
