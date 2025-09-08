@@ -129,7 +129,7 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, "/welcome")
+	c.Redirect(http.StatusFound, "/home")
 
 	scripts.CheckLogFile() // Checks the number of rulers
 
@@ -168,7 +168,7 @@ func loginHandler_debug(c *gin.Context) {
 			return
 		}
 
-		c.Redirect(http.StatusFound, "/welcome")
+		c.Redirect(http.StatusFound, "/home")
 
 		scripts.CheckLogFile() // Checks the number of rulers
 
@@ -350,8 +350,8 @@ func main() {
 		router.POST("/auth", loginHandler)
 	}
 
-	router.GET("/welcome", checkAuthenticated(), func(c *gin.Context) {
-		c.File("sites/welcome.html")
+	router.GET("/home", checkAuthenticated(), func(c *gin.Context) {
+		c.File("sites/home.html")
 	})
 
 	// System info
