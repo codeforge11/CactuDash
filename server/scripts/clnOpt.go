@@ -16,3 +16,14 @@ func ClearOldLogs(c *gin.Context) {
 		LogError(err)
 	}
 }
+
+// func to remove old work directories
+func CleanOldWorkDirectory(c *gin.Context) {
+	cmd := exec.Command("/bin/sh", "-c", `rm -rf ./workDirectory/*`)
+
+	if err := cmd.Run(); err != nil {
+		log.Println("Error running script to clean up old working directories:", err)
+		LogError(err)
+	}
+
+}
