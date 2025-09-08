@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// func to remove old logs files
 func ClearOldLogs(c *gin.Context) {
 	cmd := exec.Command("/bin/sh", "-c", `rm -rf ./logs/old_logs`)
 
