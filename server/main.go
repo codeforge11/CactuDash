@@ -279,15 +279,6 @@ func wsHandler(c *gin.Context) {
 	}
 }
 
-func clearOldLogs(c *gin.Context) {
-	cmd := exec.Command("/bin/sh", "-c", `rm -rf ./logs/old_logs`)
-
-	if err := cmd.Run(); err != nil {
-		log.Println("Error running clear cash script:", err)
-		scripts.LogError(err)
-	}
-}
-
 func main() {
 
 	flag.Parse()
@@ -384,7 +375,7 @@ func main() {
 
 	router.POST("/createDockerType", scripts.CreateDocker) //Create Docker or Docker Compose
 
-	router.POST("/clearOldLogs", clearOldLogs)
+	router.POST("/clearOldLogs", scripts.ClearOldLogs)
 
 	err = router.Run(":3030") //Start server on port 3030
 	if err != nil {
