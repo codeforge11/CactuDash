@@ -377,6 +377,8 @@ func main() {
 
 	router.POST("/clearOldLogs", scripts.ClearOldLogs)
 
+	router.POST("/clearOldWorkDirectory", scripts.CleanOldWorkDirectory)
+
 	err = router.Run(":3030") //Start server on port 3030
 	if err != nil {
 		log.Panic("Error starting the server:", err)
