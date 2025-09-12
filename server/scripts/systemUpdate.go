@@ -15,8 +15,8 @@ func Update(c *gin.Context) {
 	if supportStatus {
 		switch osName {
 		case "arch":
-			cmd := exec.Command("/bin/sh", "-c", `sudo pacman -Syu -y`)
-			err := cmd.Run()
+			err := exec.Command("/bin/sh", "-c", `sudo pacman -Syu -y`).Run()
+
 			if err != nil {
 				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
@@ -25,9 +25,8 @@ func Update(c *gin.Context) {
 			}
 
 		case "debian", "ubuntu":
-			cmd := exec.Command("/bin/sh", "-c", `sudo apt update -y && sudo apt upgrade -y`)
+			err := exec.Command("/bin/sh", "-c", `sudo apt update -y && sudo apt upgrade -y`).Run()
 
-			err := cmd.Run()
 			if err != nil {
 				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
@@ -36,9 +35,8 @@ func Update(c *gin.Context) {
 			}
 
 		case "fedora":
-			cmd := exec.Command("/bin/sh", "-c", `sudo dnf update -y`)
+			err := exec.Command("/bin/sh", "-c", `sudo dnf update -y`).Run()
 
-			err := cmd.Run()
 			if err != nil {
 				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
