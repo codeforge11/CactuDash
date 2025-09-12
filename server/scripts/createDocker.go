@@ -132,7 +132,17 @@ func CreateDocker(c *gin.Context) {
 			}
 
 		}
+
 	default:
+		// err := exec.Command("rm", "-rf", "./workDirectory").Run()
+		// if err != nil {
+		// 	log.Println("Failed to delete compose working folder: " + "./workDirectory")
+		// 	LogMessage("Failed to delete compose working folder: " + "./workDirectory")
+		// 	LogError(err)
+		// }
+
+		LogMessage("Incorrect docker option.")
+		log.Println("Incorrect docker option.")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Incorrect docker option"})
 		return
 	}
