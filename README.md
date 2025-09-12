@@ -19,6 +19,7 @@
 | Raspbian        |   ✅   |
 | Red Hat/Fedora  |   ✅   |
 | Windows         |   ❌   |
+| BSD similar | ❌ |
 
 
 ## Installation 
