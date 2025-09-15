@@ -23,7 +23,22 @@
 
 
 ## Installation 
-To install just use the command below:
+
+# Method 1: Manual Installation
+
+```bash
+# Download the installation script
+wget -O install_cactudash.sh https://raw.githubusercontent.com/codeforge11/CactuDash/master/install.sh
+
+# Make it executable
+chmod +x install_cactudash.sh
+
+# Run the installation with sudo privileges
+sudo ./install_cactudash.sh
+```
+
+# Method 2: Automatic Installation
+For quick installation, use this one-step command.
 
 ```bash
 wget -O - https://raw.githubusercontent.com/codeforge11/CactuDash/master/install.sh | sudo bash
