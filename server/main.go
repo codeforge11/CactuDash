@@ -295,7 +295,7 @@ func main() {
 
 	router := gin.Default()
 
-	scripts.LogMessage("Server version: " + scripts.Version)
+	scripts.LogMessage(fmt.Sprintf("Server version: %s", scripts.Version))
 
 	// Set trusted proxies
 	err := router.SetTrustedProxies([]string{"127.0.0.1"})
@@ -384,4 +384,5 @@ func main() {
 		log.Panic("Error starting the server:", err)
 		scripts.LogError(err)
 	}
+
 }
