@@ -22,6 +22,7 @@ function createDocker() {
         <textarea
             class="w-full max-w-4xl bg-[#23283a] rounded-lg shadow-lg px-6 py-4 text-[#e0e0e0] font-mono text-lg outline-none"
             id="DockerCode" rows="3" placeholder="docker run ..."></textarea>
+             <div style="color:#b00020; background:#ffeaea; border:1px solid #b00020; padding:10px; margin:10px 0; border-radius:5px; font-weight:bold; display:none;" id="errors"></div>
         <div style="display: flex; gap: 20px;">
             <button onclick="createDockerPush()" class="dockerCrButtons" style="background: #2496ed;">Create Docker Image</button>
             <button onclick="showElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
@@ -60,6 +61,7 @@ function createDockerCompose() {
                 <button type="submit" class="dockerCrButtons" style="background: #2496ed;">Create Docker Container</button>
                 <button type="button" onclick="showElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
             </div>
+            <div id="errors"></div>
         </form>
     `;
 
@@ -94,15 +96,41 @@ function createDockerCompose() {
 
 async function createDockerPush() {
     const code = document.getElementById('DockerCode').value;
+    const errorLabel = document.getElementById("errors");
+    if (errorLabel) {
+        errorLabel.innerText = "";
+        errorLabel.title = "";
+        errorLabel.style.display = "none";
+    }
     try {
         const res = await fetch('/createDockerType', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code, type: true})
         });
-        console.log(await res.json());
-        showElements();
+        const data = await res.json();
+        if (!res.ok || data.error) {
+            if (errorLabel) {
+                errorLabel.title = "An error occurred";
+                errorLabel.innerText = data.error || "An error occurred while creating the Docker image.";
+                errorLabel.style.display = "block";
+                setTimeout(() => {
+                    errorLabel.style.display = "none";
+                }, 4000);
+            }
+        } else {
+            console.log(data);
+        }
     } catch (error) {
+        
+        if (errorLabel) {
+            errorLabel.title = "An error occurred";
+            errorLabel.innerText = "An error occurred while creating the Docker image.";
+            errorLabel.style.display = "block";
+            setTimeout(() => {
+                errorLabel.style.display = "none";
+            }, 4000);
+        }
         console.error('Error:', error);
     }
 }
@@ -110,20 +138,49 @@ async function createDockerPush() {
 async function createDockerComposePush() {
     const code = document.getElementById('DockerCode').value;
     let name = document.getElementById('stackName').value;
+    const errorLabel = document.getElementById("errors");
+
+    if (errorLabel) {
+        errorLabel.innerText = "";
+        errorLabel.title = "";
+        errorLabel.style.display = "none";
+    }
+
     if (!name) {
         name = new Date().toISOString().replace(/[:.]/g, '-');
     }
 
     try {
+
         const res = await fetch('/createDockerType', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code, type: false, name })
         });
-        console.log(await res.json());
-        showElements();
+
+        const data = await res.json();
+        if (!res.ok || data.error) {
+            if (errorLabel) {
+                errorLabel.title = "An error occurred";
+                errorLabel.innerText = data.error || "An error occurred while creating the Docker container.";
+                errorLabel.style.display = "block";
+                setTimeout(() => {
+                    errorLabel.style.display = "none";
+                }, 4000);
+            }
+        } else {
+            console.log(data);
+            showElements();
+        }
     } catch (error) {
-        showElements()
+        if (errorLabel) {
+            errorLabel.title = "An error occurred";
+            errorLabel.innerText = "An error occurred while creating the Docker container.";
+            errorLabel.style.display = "block";
+            setTimeout(() => {
+                errorLabel.style.display = "none";
+            }, 4000);
+        }
         console.error('Error:', error);
     }
 }
