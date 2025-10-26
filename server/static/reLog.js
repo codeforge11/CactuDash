@@ -19,6 +19,7 @@ function setUIMode() {
     const warning = document.getElementById('warning');
     const authForm = document.getElementById('auth-form');
     const usernameInput = document.getElementById('username')
+    const userLabel = document.getElementById('userLabel')
     
     if (isRegisterMode) {
         formTitle.textContent = 'Register for "admin" account';
@@ -29,6 +30,7 @@ function setUIMode() {
         usernameInput.value = 'admin';
         usernameInput.readOnly = true;
         usernameInput.style.display = 'none';
+        userLabel.style.display='none';
     } else {
         formTitle.textContent = 'Login';
         submitText.textContent = 'Login';
