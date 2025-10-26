@@ -306,33 +306,22 @@ func main() {
 
 	router.Static("/static", "./static")
 
+	router.GET("/", func(c *gin.Context) {
+		c.File("sites/auth.html")
+	})
+
+	router.GET("/auth-mode", scripts.CheckType)
+
 	if !*scripts.DebugMode {
-		if scripts.Checkdb(nil) {
-			router.GET("/", func(c *gin.Context) {
-				c.File("sites/login.html")
-			})
+		router.POST("/register", scripts.Register)
 
-		} else {
-			router.GET("/", func(c *gin.Context) {
-				c.File("sites/register.html")
-			})
-			router.POST("/register", scripts.Register)
-		}
 	} else {
+		http.ListenAndServe("localhost:6060", nil)
 
-		go func() {
-			http.ListenAndServe("localhost:6060", nil)
-
-			fmt.Println("Profiling started on localhost:6060")
-			scripts.LogMessage("Profiling started on localhost:6060")
-			log.Println(fmt.Println("Profiling started on localhost:6060"))
-
-		}() // ? pprof in debug
-
-		router.GET("/", func(c *gin.Context) {
-			c.File("sites/login.html")
-		})
-	}
+		fmt.Println("Profiling started on localhost:6060")
+		scripts.LogMessage("Profiling started on localhost:6060")
+		log.Println(fmt.Println("Profiling started on localhost:6060"))
+	} // ? pprof in debug
 
 	if *scripts.DebugMode {
 		router.POST("/auth", loginHandler_debug)

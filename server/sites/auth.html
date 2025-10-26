@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CactuDash</title>
+    <link rel="icon" href="static/img/logomark.svg">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/reLog.js"></script>
+
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .logo-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo-section img {
+            width: 180px;
+            box-shadow: 0 8px 32px 0 rgba(36, 0, 0, 0.35);
+            border-radius: 20%;
+        }
+
+        .logo-section p {
+            margin-top: 10px;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+
+        #adminText {
+            background: linear-gradient(45deg, #ff3366, #ff7733);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .login {
+            width: 100%;
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.13);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            margin: 0 auto;
+        }
+
+        #errorMessage {
+            color: #ff5252;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ff5252;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+            text-align: center;
+        }
+
+        #warning {
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            color: #ffcc80;
+            text-align: center;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        #warning.show {
+            display: flex;
+        }
+
+        .login form input[type="password"],
+        .login form input[type="text"] {
+            width: 100%;
+        }
+
+        .login form label {
+            width: 50px;
+        }
+
+        #submitButton {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(45deg, #00c853, #00e676);
+            border: 0;
+            cursor: pointer;
+            font-weight: bold;
+            color: #000;
+            transition: all 0.3s;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #submitButton:hover {
+            background: linear-gradient(45deg, #00e676, #69f0ae);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 230, 118, 0.3);
+        }
+
+        .register-mode #passwd2-container,
+        .register-mode #warning {
+            display: flex;
+        }
+
+        .login-mode #passwd2-container,
+        .login-mode #warning {
+            display: none;
+        }
+
+        .form-row {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="auth-container">
+        <div class="logo-section">
+            <img src="static/img/logomark.svg" alt="CactuDash">
+        </div>
+
+        <div class="login">
+            <h1 id="form-title">Authentication</h1>
+            <form id="auth-form" method="post">
+                <div class="form-row">
+                    <label for="username">
+                        <i class="fas fa-user"></i>
+                    </label>
+                    <input type="text" name="username" placeholder="Username" id="username" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                    </label>
+                    <input type="password" name="password" placeholder="Password" id="password" required minlength="8">
+                </div>
+
+                <div class="form-row hidden" id="passwd2-container">
+                    <label for="passwd2">
+                        <i class="fas fa-redo"></i>
+                    </label>
+                    <input type="password" name="passwd2" placeholder="Confirm password" id="passwd2" minlength="8">
+                </div>
+
+                <button type="submit" id="submitButton">
+                    <span id="submit-text">Submit</span>
+                </button>
+
+                <div id="errorMessage"></div>
+
+                <div id="warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                        Note: Server will be automatically restarted after password setup
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
