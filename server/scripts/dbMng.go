@@ -14,23 +14,6 @@ import (
 
 const Dbfile string = "CactuDB.db" //database file
 
-func Checkdb(c *gin.Context) bool {
-
-	_, err := os.Stat(Dbfile)
-	if os.IsNotExist(err) {
-		// Database doesn't exist
-		log.Println("Database file not detected")
-		if c != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database file not detected"})
-		}
-		LogError(err)
-		LogMessage("Database file not detected")
-
-		return false
-	}
-	return true
-}
-
 type DBCredentials struct {
 	Passwd string `form:"passwd2" json:"passwd2"`
 }
@@ -113,4 +96,27 @@ func Register(c *gin.Context) {
 		return
 	}
 
+}
+
+func Checkdb(c *gin.Context) bool {
+
+	_, err := os.Stat(Dbfile)
+	if os.IsNotExist(err) {
+		// Database file doesn't exist
+		log.Println("Database file not detected")
+		if c != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database file not detected"})
+		}
+		LogError(err)
+		LogMessage("Database file not detected")
+
+		return false
+	}
+	return true
+}
+
+func CheckType(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"dbExists": Checkdb(nil),
+	})
 }
