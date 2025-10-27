@@ -217,7 +217,10 @@ socket.onmessage = function (event) {
             row.insertCell(3).innerText = container.Status;
 
             let actionsCell = row.insertCell(4);
+            
             let toggleButton = document.createElement('button');
+            toggleButton.id = 'restartButton'
+            toggleButton.color = 'black'
             toggleButton.innerText = container.Status.includes("Up") ? 'Stop' : 'Start';
             toggleButton.onclick = function () {
                 fetch('/toggle/' + container.Id, { method: 'POST' })
@@ -229,6 +232,7 @@ socket.onmessage = function (event) {
             let restartButton = document.createElement('button');
             restartButton.id = 'restartButton';
             const img = document.createElement('img');
+            
             img.src = 'static/img/dashboard/rebootButton.svg';
             img.alt = 'Restart';
             img.style.width = 'auto';

@@ -221,7 +221,7 @@ body {
 .documentation,
 #openMenuButton {
   background-color: #00A7E1;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 #restartButton:hover,
