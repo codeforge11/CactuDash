@@ -38,6 +38,7 @@ function setUIMode() {
         warning.classList.remove('show');
         authForm.action = '/auth';
         usernameInput.readOnly = false;
+        usernameInput.value='admin'
     }
 }
 
