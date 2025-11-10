@@ -57,11 +57,11 @@ function createDockerCompose() {
                     id="DockerCode" name="DockerCode" rows="16" maxlength="10000"
                     style="padding-top: 2px; border-radius: 0 8px 8px 0; border-left: 1px solid #333; min-width: 400px; min-height: 320px; display: block; line-height: 1.5; overflow: auto; overflow-y: auto;" required></textarea>
             </div>
+                                     <div style="color:#b00020; background:#ffeaea; border:1px solid #b00020; padding:10px; margin:10px 0; border-radius:5px; font-weight:bold; display:none;" id="errors"></div>
             <div style="display: flex; gap: 20px; margin-top: 16px;">
                 <button type="submit" class="dockerCrButtons" style="background: #2496ed;">Create Docker Container</button>
                 <button type="button" onclick="showElements()" class="dockerCrButtons" style="background: #444950;">Cancel</button>
             </div>
-            <div id="errors"></div>
         </form>
     `;
 
