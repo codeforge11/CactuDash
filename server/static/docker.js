@@ -8,7 +8,7 @@ function showElements() {
         </div>
 
         <div id="dockerComposeCreate" title="Create docker compose" onclick="createDockerCompose()">
-            <img src="static/img/docker/docker-compose-logo.png" alt="docker compose">
+            <img src="static/img/docker/dockerComposeLogo.png" alt="docker compose">
         </div>
     `;
 }
