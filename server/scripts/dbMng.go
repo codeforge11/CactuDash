@@ -88,12 +88,14 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	err = exec.Command("reboot").Run()
-	if err != nil {
-		log.Println(err)
-		LogError(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
-		return
+	if !*DebugMode {
+		err = exec.Command("reboot").Run()
+		if err != nil {
+			log.Println(err)
+			LogError(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
+			return
+		}
 	}
 
 }
