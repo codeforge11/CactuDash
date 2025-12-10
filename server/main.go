@@ -310,12 +310,16 @@ func main() {
 		c.File("sites/auth.html")
 	})
 
-	router.GET("/auth-mode", scripts.CheckType)
+	if !*scripts.DebugMode {
+		router.GET("/auth-mode", scripts.CheckType)
+	}
 
 	if !*scripts.DebugMode {
 		router.POST("/register", scripts.Register)
 
 	} else {
+		router.POST("/register", scripts.Register)
+
 		http.ListenAndServe("localhost:6060", nil)
 
 		fmt.Println("Profiling started on localhost:6060")
