@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
+	betterLogs "github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +16,7 @@ func CheckReq(c *gin.Context) bool {
 	output, err := exec.Command("docker", "--version").Output()
 
 	if err != nil {
-		LogError(err)
+		betterLogs.LogError(err)
 	}
 
 	if strings.Contains(string(output), "not found") {
@@ -26,9 +27,9 @@ func CheckReq(c *gin.Context) bool {
 			switch distro {
 			case "arch":
 				log.Println("Installing docker for " + distro)
-				LogMessage("Installing docker for " + distro)
+				betterLogs.LogMessage("Installing docker for " + distro)
 				if err := exec.Command("pacman", "-Sy", "--noconfirm", "docker", "docker-compose").Run(); err != nil {
-					LogError(err)
+					betterLogs.LogError(err)
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to install docker"})
 					return false
 				}
@@ -38,14 +39,14 @@ func CheckReq(c *gin.Context) bool {
 
 			case "debian", "ubuntu":
 				log.Println("Installing docker for " + distro)
-				LogMessage("Installing docker for " + distro)
+				betterLogs.LogMessage("Installing docker for " + distro)
 				if err := exec.Command("apt-get", "update").Run(); err != nil {
-					LogError(err)
+					betterLogs.LogError(err)
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update apt-get"})
 					return false
 				}
 				if err := exec.Command("apt-get", "install", "-y", "docker.io").Run(); err != nil {
-					LogError(err)
+					betterLogs.LogError(err)
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to install docker.io"})
 					return false
 				}
@@ -57,9 +58,9 @@ func CheckReq(c *gin.Context) bool {
 
 			case "fedora":
 				log.Println("Installing docker for " + distro)
-				LogMessage("Installing docker for " + distro)
+				betterLogs.LogMessage("Installing docker for " + distro)
 				if err := exec.Command("dnf", "install", "-y", "docker", "docker-compose").Run(); err != nil {
-					LogError(err)
+					betterLogs.LogError(err)
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to install docker"})
 					return false
 				}
@@ -69,13 +70,13 @@ func CheckReq(c *gin.Context) bool {
 
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "unsupported distribution"})
-				LogMessage("Unsupported distribution")
+				betterLogs.LogMessage("Unsupported distribution")
 				return false
 			}
 		}
 
 		c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
-		LogMessage("Update script executed")
+		betterLogs.LogMessage("Update script executed")
 
 	} else {
 		return true

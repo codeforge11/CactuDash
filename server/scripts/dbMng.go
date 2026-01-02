@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 
+	betterlogs "github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 	_ "github.com/glebarez/go-sqlite"
 	"golang.org/x/crypto/bcrypt"
@@ -21,15 +22,16 @@ type DBCredentials struct {
 func Register(c *gin.Context) {
 	var creds DBCredentials
 	if err := c.ShouldBind(&creds); err != nil {
-		LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		log.Println(err)
 		return
 	}
+
 	// ? Hashing password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Passwd), bcrypt.DefaultCost)
 	if err != nil {
-		LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		log.Println("Failed to hash password.")
 		return
@@ -40,7 +42,7 @@ func Register(c *gin.Context) {
 
 		if err := os.MkdirAll("./", os.ModePerm); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create database directory"})
-			LogError(err)
+			betterlogs.LogError(err)
 			log.Println("Failed to create database directory.")
 			return
 		}
@@ -48,7 +50,7 @@ func Register(c *gin.Context) {
 		file, err := os.Create(Dbfile)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create database file"})
-			LogError(err)
+			betterlogs.LogError(err)
 			log.Println("Failed to create database file.")
 			return
 		}
@@ -60,7 +62,7 @@ func Register(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open SQLite database"})
-		LogError(err)
+		betterlogs.LogError(err)
 		return
 	}
 	// defer sqlDB.Close()
@@ -76,7 +78,7 @@ func Register(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create users table"})
-		LogError(err)
+		betterlogs.LogError(err)
 		return
 	}
 
@@ -84,7 +86,7 @@ func Register(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save admin password"})
-		LogError(err)
+		betterlogs.LogError(err)
 		return
 	}
 
@@ -92,7 +94,7 @@ func Register(c *gin.Context) {
 		err = exec.Command("reboot").Run()
 		if err != nil {
 			log.Println(err)
-			LogError(err)
+			betterlogs.LogError(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to reboot"})
 			return
 		}
@@ -109,8 +111,8 @@ func Checkdb(c *gin.Context) bool {
 		if c != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database file not detected"})
 		}
-		LogError(err)
-		LogMessage("Database file not detected")
+		betterlogs.LogError(err)
+		betterlogs.LogMessage("Database file not detected")
 
 		return false
 	}

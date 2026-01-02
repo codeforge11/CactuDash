@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/codeforge11/CactuDash/scripts"
+	betterlogs "github.com/codeforge11/betterLogs"
 	"golang.org/x/crypto/bcrypt"
 
 	"flag"
@@ -39,7 +40,7 @@ func checkAuthenticated() gin.HandlerFunc {
 		session, err := scripts.Store.Get(c.Request, "session-name")
 		if err != nil {
 			log.Println("Error getting session:", err)
-			scripts.LogError(err)
+			betterlogs.LogError(err)
 			c.Redirect(http.StatusFound, "/")
 			c.Abort()
 			return
@@ -74,13 +75,13 @@ func checkAuthenticated() gin.HandlerFunc {
 func loginHandler(c *gin.Context) {
 	var creds Credentials
 	if err := c.Bind(&creds); err != nil {
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(400, gin.H{"error": "invalid request"})
 		return
 	}
 
 	if creds.Username == "" || creds.Password == "" {
-		scripts.LogMessage("invalid credentials")
+		betterlogs.LogMessage("invalid credentials")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -90,7 +91,7 @@ func loginHandler(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open SQLite database"})
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		return
 	}
 
@@ -99,14 +100,14 @@ func loginHandler(c *gin.Context) {
 
 	err = row.Scan(&realPasswd)
 	if err != nil {
-		scripts.LogMessage("invalid user")
+		betterlogs.LogMessage("invalid user")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
 
 	// comparing the hashed password with the given one
 	if err := bcrypt.CompareHashAndPassword([]byte(realPasswd), []byte(creds.Password)); err != nil {
-		scripts.LogMessage("invalid password")
+		betterlogs.LogMessage("invalid password")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -114,7 +115,7 @@ func loginHandler(c *gin.Context) {
 	session, err := scripts.Store.Get(c.Request, "session-name")
 	if err != nil {
 		log.Println("Error creating session:", err)
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(500, gin.H{"error": "session error"})
 		return
 	}
@@ -124,16 +125,16 @@ func loginHandler(c *gin.Context) {
 	session.Values["server_start_time"] = scripts.ServerStartTime
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		log.Println("Error saving session:", err)
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(500, gin.H{"error": "session save error"})
 		return
 	}
 
 	c.Redirect(http.StatusFound, "/home")
 
-	scripts.CheckLogFile() // Checks the number of rulers
+	betterlogs.CheckLogFile() // Checks the number of rulers
 
-	scripts.LogMessage("Successful login")
+	betterlogs.LogMessage("Successful login")
 }
 
 func loginHandler_debug(c *gin.Context) {
@@ -141,7 +142,7 @@ func loginHandler_debug(c *gin.Context) {
 
 	var creds Credentials
 	if err := c.Bind(&creds); err != nil {
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(400, gin.H{"error": "invalid request"})
 		return
 	}
@@ -152,7 +153,7 @@ func loginHandler_debug(c *gin.Context) {
 
 		if err != nil {
 			log.Println("Error creating session:", err)
-			scripts.LogError(err)
+			betterlogs.LogError(err)
 			c.JSON(500, gin.H{"error": "session error"})
 			return
 		}
@@ -163,19 +164,19 @@ func loginHandler_debug(c *gin.Context) {
 
 		if err := session.Save(c.Request, c.Writer); err != nil {
 			log.Println("Error saving session:", err)
-			scripts.LogError(err)
+			betterlogs.LogError(err)
 			c.JSON(500, gin.H{"error": "session save error"})
 			return
 		}
 
 		c.Redirect(http.StatusFound, "/home")
 
-		scripts.CheckLogFile() // Checks the number of rulers
+		betterlogs.CheckLogFile() // Checks the number of rulers
 
-		scripts.LogMessage("Successful login in debug mode")
+		betterlogs.LogMessage("Successful login in debug mode")
 		return
 	} else {
-		scripts.LogMessage("invalid credentials in debug mode")
+		betterlogs.LogMessage("invalid credentials in debug mode")
 		c.JSON(401, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -186,7 +187,7 @@ func systemInfoHandler(c *gin.Context) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Fatal(err)
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get hostname"})
 		return
 	}
@@ -207,7 +208,7 @@ func diskUsageHandler(c *gin.Context) {
 	usageStat, err := disk.Usage("/")
 	if err != nil {
 		log.Println("Error getting disk usage:", err)
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to get disk usage"})
 		return
 	}
@@ -229,7 +230,7 @@ func wsHandler(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println("Failed to set WebSocket upgrade:", err)
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 		return
 	}
 	defer conn.Close()
@@ -238,7 +239,7 @@ func wsHandler(c *gin.Context) {
 		usage, err := cpu.Percent(0, false)
 		if err != nil {
 			log.Println("Error getting CPU usage:", err)
-			scripts.LogError(err)
+			betterlogs.LogError(err)
 			break
 		}
 
@@ -269,7 +270,7 @@ func wsHandler(c *gin.Context) {
 		})
 		if err != nil {
 			log.Println("Error writing WebSocket message:", err)
-			scripts.LogError(err)
+			betterlogs.LogError(err)
 			break
 		}
 
@@ -295,13 +296,13 @@ func main() {
 
 	router := gin.Default()
 
-	scripts.LogMessage(fmt.Sprintf("Server version: %s", scripts.Version))
+	betterlogs.LogMessage(fmt.Sprintf("Server version: %s", scripts.Version))
 
 	// Set trusted proxies
 	err := router.SetTrustedProxies([]string{"127.0.0.1"})
 	if err != nil {
 		log.Fatal("Error setting trusted proxies:", err)
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 	}
 
 	router.Static("/static", "./static")
@@ -323,13 +324,13 @@ func main() {
 		http.ListenAndServe("localhost:6060", nil)
 
 		fmt.Println("Profiling started on localhost:6060")
-		scripts.LogMessage("Profiling started on localhost:6060")
+		betterlogs.LogMessage("Profiling started on localhost:6060")
 		log.Println(fmt.Println("Profiling started on localhost:6060"))
 	} // ? pprof in debug
 
 	if *scripts.DebugMode {
 		router.POST("/auth", loginHandler_debug)
-		scripts.LogMessage("Running in debug mode")
+		betterlogs.LogMessage("Running in debug mode")
 	} else {
 		router.POST("/auth", loginHandler)
 	}
@@ -375,7 +376,7 @@ func main() {
 	err = router.Run(":3030") //Start server on port 3030
 	if err != nil {
 		log.Panic("Error starting the server:", err)
-		scripts.LogError(err)
+		betterlogs.LogError(err)
 	}
 
 }
