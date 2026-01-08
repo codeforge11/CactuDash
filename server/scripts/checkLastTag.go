@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	betterlogs "github.com/codeforge11/betterLogs"
+	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,7 +42,7 @@ func GetLastGitTagName() (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Println(err)
-		betterlogs.LogError(err)
+		betterLogs.LogError(err)
 
 		return "", err
 	}
@@ -55,7 +55,7 @@ func GetLastGitTagName() (string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
-		betterlogs.LogError(err)
+		betterLogs.LogError(err)
 
 		return "", err
 	}
@@ -64,7 +64,7 @@ func GetLastGitTagName() (string, error) {
 	err = json.Unmarshal(body, &tags)
 	if err != nil {
 		log.Println(err)
-		betterlogs.LogError(err)
+		betterLogs.LogError(err)
 
 		return "", err
 	}
@@ -87,7 +87,7 @@ func GetLastGitTag(c *gin.Context) {
 	tag, err := GetLastGitTagName()
 	if err != nil {
 		log.Println(err)
-		betterlogs.LogError(err)
+		betterLogs.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

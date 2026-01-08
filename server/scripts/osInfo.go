@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	betterLogs "github.com/codeforge11/betterLogs"
+	"github.com/codeforge11/betterLogs"
 )
 
 func RetrieveDistroInfo() (string, bool) {

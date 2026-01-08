@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os/exec"
 
-	betterlogs "github.com/codeforge11/betterLogs"
+	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +21,7 @@ func Update(c *gin.Context) {
 			if err != nil {
 				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
-				betterlogs.LogError(err)
+				betterLogs.LogError(err)
 				return
 			}
 
@@ -31,7 +31,7 @@ func Update(c *gin.Context) {
 			if err != nil {
 				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
-				betterlogs.LogError(err)
+				betterLogs.LogError(err)
 				return
 			}
 
@@ -41,16 +41,16 @@ func Update(c *gin.Context) {
 			if err != nil {
 				log.Fatal("Error running update script:", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to run update script"})
-				betterlogs.LogError(err)
+				betterLogs.LogError(err)
 				return
 			}
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "unsupported distribution"})
-			betterlogs.LogMessage("Unsupported distribution")
+			betterLogs.LogMessage("Unsupported distribution")
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{"status": "update script executed"})
-		betterlogs.LogMessage("Update script executed")
+		betterLogs.LogMessage("Update script executed")
 	}
 }

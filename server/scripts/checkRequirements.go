@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	betterLogs "github.com/codeforge11/betterLogs"
+	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
