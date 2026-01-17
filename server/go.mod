@@ -1,6 +1,6 @@
 module github.com/codeforge11/CactuDash
 
-go 1.25.5
+go 1.25.6
 
 require (
 	github.com/gin-gonic/gin v1.11.0
@@ -9,7 +9,7 @@ require (
 
 require (
 	github.com/bytedance/gopkg v0.1.3 // indirect
-	github.com/codeforge11/betterLogs v1.1.0
+	github.com/codeforge11/betterLogs v1.2.0
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
@@ -17,17 +17,17 @@ require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/ncruces/go-strftime v1.0.0 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.58.0 // indirect
+	github.com/quic-go/quic-go v0.59.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/tklauser/go-sysconf v0.3.16 // indirect
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	go.uber.org/mock v0.6.0 // indirect
-	golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93 // indirect
-	modernc.org/libc v1.67.4 // indirect
+	golang.org/x/exp v0.0.0-20260112195511-716be5621a96 // indirect
+	modernc.org/libc v1.67.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.43.0 // indirect
+	modernc.org/sqlite v1.44.1 // indirect
 )
 
 require (
@@ -53,9 +53,9 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	golang.org/x/arch v0.23.0 // indirect
-	golang.org/x/crypto v0.46.0
-	golang.org/x/net v0.48.0 // indirect
+	golang.org/x/crypto v0.47.0
+	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
+	golang.org/x/text v0.33.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
