@@ -4,7 +4,6 @@ import (
 	"log"
 	"os/exec"
 
-	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +13,7 @@ func ClearOldLogs(c *gin.Context) {
 
 	if err := cmd.Run(); err != nil {
 		log.Println("Error running clear cash script:", err)
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 	}
 }
 
@@ -24,7 +23,7 @@ func CleanOldWorkDirectory(c *gin.Context) {
 
 	if err := cmd.Run(); err != nil {
 		log.Println("Error running script to clean up old working directories:", err)
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 	}
 
 }

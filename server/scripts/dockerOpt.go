@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,7 +23,7 @@ func GetContainers(c *gin.Context) {
 	if err != nil {
 		log.Println("Error executing docker command:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error executing docker command"})
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 		return
 	}
 
@@ -49,7 +48,7 @@ func ToggleContainerState(c *gin.Context) {
 	out, err := exec.Command("docker", "inspect", "--format={{.State.Running}}", id).Output()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 		return
 	}
 
@@ -57,17 +56,17 @@ func ToggleContainerState(c *gin.Context) {
 	if running == "true" {
 		if err := exec.Command("docker", "stop", id).Run(); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to stop container"})
-			betterLogs.LogError(err)
+			BetterLogs.LogError(err)
 			return
 		}
-		betterLogs.LogMessage("Container stopped:" + id)
+		BetterLogs.LogMessage("Container stopped:" + id)
 	} else {
 		if err := exec.Command("docker", "start", id).Run(); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start container"})
-			betterLogs.LogError(err)
+			BetterLogs.LogError(err)
 			return
 		}
-		betterLogs.LogMessage("Container started:" + id)
+		BetterLogs.LogMessage("Container started:" + id)
 		// fmt.Println("Container started:", id)
 	}
 	c.Status(http.StatusNoContent)
@@ -79,10 +78,10 @@ func RestartContainer(c *gin.Context) {
 
 	if err := exec.Command("docker", "restart", id).Run(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to restart container"})
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 		return
 	}
-	betterLogs.LogMessage("Container restarted:" + id)
+	BetterLogs.LogMessage("Container restarted:" + id)
 
 }
 
@@ -92,9 +91,9 @@ func RemoveContainer(c *gin.Context) {
 
 	if err := exec.Command("docker", "rm", id).Run(); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove container"})
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 		return
 	}
-	betterLogs.LogMessage("Container removed:" + id)
+	BetterLogs.LogMessage("Container removed:" + id)
 
 }

@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
 )
@@ -37,7 +36,7 @@ func GetSession(c *gin.Context) (*sessions.Session, error) {
 	session, err := Store.Get(c.Request, "session-name")
 	if err != nil {
 		log.Println(err)
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "session error"})
 		return nil, err
 	}

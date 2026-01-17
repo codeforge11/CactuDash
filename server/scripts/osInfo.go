@@ -7,8 +7,6 @@ import (
 	"os"
 	"runtime"
 	"strings"
-
-	"github.com/codeforge11/betterLogs"
 )
 
 func RetrieveDistroInfo() (string, bool) {
@@ -19,7 +17,7 @@ func RetrieveDistroInfo() (string, bool) {
 
 	if err != nil {
 		log.Println("Error opening /etc/os-release:", err)
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 
 	} else {
 		defer file.Close()
@@ -40,7 +38,7 @@ func RetrieveDistroInfo() (string, bool) {
 
 		if err := scanner.Err(); err != nil {
 			log.Println("Error reading file:", err)
-			betterLogs.LogError(err)
+			BetterLogs.LogError(err)
 		}
 	}
 
@@ -66,7 +64,7 @@ func GetIpAddr() net.IP {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
 		log.Fatal(err)
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 	}
 	defer conn.Close()
 

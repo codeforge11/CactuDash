@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +22,7 @@ func CreateDocker(c *gin.Context) {
 	if err := c.BindJSON(&Docker); err != nil {
 		log.Println(err)
 
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
@@ -37,7 +36,7 @@ func CreateDocker(c *gin.Context) {
 			if err != nil {
 				log.Println(err)
 
-				betterLogs.LogError(err)
+				BetterLogs.LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Session error"})
 				return
 			}
@@ -49,20 +48,20 @@ func CreateDocker(c *gin.Context) {
 					output, err := cmd.CombinedOutput()
 
 					if err != nil {
-						betterLogs.LogError(err)
+						BetterLogs.LogError(err)
 						c.JSON(http.StatusInternalServerError, gin.H{
 							"error":   "Failed to execute docker run command",
 							"details": err.Error(),
 							"output":  string(output),
 						})
-						betterLogs.LogError(errors.New("Docker run command failed: " + err.Error() + " | " + string(output)))
+						BetterLogs.LogError(errors.New("Docker run command failed: " + err.Error() + " | " + string(output)))
 						return
 					}
 
-					betterLogs.LogMessage("Docker run command executed successfully")
+					BetterLogs.LogMessage("Docker run command executed successfully")
 
 				} else {
-					betterLogs.LogMessage("error: incorrect docker run command")
+					BetterLogs.LogMessage("error: incorrect docker run command")
 					c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect docker run command"})
 					return
 				}
@@ -82,7 +81,7 @@ func CreateDocker(c *gin.Context) {
 			if err := os.MkdirAll(dir, 0755); err != nil {
 				log.Println(err)
 
-				betterLogs.LogError(err)
+				BetterLogs.LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create directory"})
 				return
 			}
@@ -92,7 +91,7 @@ func CreateDocker(c *gin.Context) {
 			if err != nil {
 				log.Println(err)
 
-				betterLogs.LogMessage("error: Failed to create compose.yaml")
+				BetterLogs.LogMessage("error: Failed to create compose.yaml")
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create compose.yaml"})
 				return
 			}
@@ -102,7 +101,7 @@ func CreateDocker(c *gin.Context) {
 			if err != nil {
 				log.Println(err)
 
-				betterLogs.LogError(err)
+				BetterLogs.LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write to compose.yaml"})
 				return
 			}
@@ -113,7 +112,7 @@ func CreateDocker(c *gin.Context) {
 			if err != nil {
 				log.Println(err)
 
-				betterLogs.LogError(err)
+				BetterLogs.LogError(err)
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error":   "Failed to execute docker-compose up",
 					"details": err.Error(),
@@ -122,14 +121,14 @@ func CreateDocker(c *gin.Context) {
 				return
 			}
 
-			betterLogs.LogMessage("Docker Compose started successfully")
+			BetterLogs.LogMessage("Docker Compose started successfully")
 			c.JSON(http.StatusOK, gin.H{"message": "Docker Compose started successfully"})
 
 			err = exec.Command("rm", "-rf", dir).Run()
 			if err != nil {
 				log.Println("Failed to delete compose working folder: " + dir)
-				betterLogs.LogMessage("Failed to delete compose working folder: " + dir)
-				betterLogs.LogError(err)
+				BetterLogs.LogMessage("Failed to delete compose working folder: " + dir)
+				BetterLogs.LogError(err)
 			}
 
 		}
@@ -139,10 +138,10 @@ func CreateDocker(c *gin.Context) {
 		// if err != nil {
 		// 	log.Println("Failed to delete compose working folder: " + "./workDirectory")
 		// 	LogMessage("Failed to delete compose working folder: " + "./workDirectory")
-		// 	betterLogs.LogError(err)
+		// 	BetterLogs.LogError(err)
 		// }
 
-		betterLogs.LogMessage("Incorrect docker option.")
+		BetterLogs.LogMessage("Incorrect docker option.")
 		log.Println("Incorrect docker option.")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Incorrect docker option"})
 		return

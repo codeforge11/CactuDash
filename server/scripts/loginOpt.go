@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/codeforge11/betterLogs"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +11,7 @@ func Logout(c *gin.Context) {
 	session, err := Store.Get(c.Request, "session-name")
 	if err != nil {
 		log.Println("Error getting session:", err)
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 
 		c.Redirect(http.StatusFound, "/")
 		return
@@ -22,7 +21,7 @@ func Logout(c *gin.Context) {
 
 	if err := session.Save(c.Request, c.Writer); err != nil {
 		log.Println("Error saving session:", err)
-		betterLogs.LogError(err)
+		BetterLogs.LogError(err)
 
 		// Move user into /
 		c.Redirect(http.StatusFound, "/")
